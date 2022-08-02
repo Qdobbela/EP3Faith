@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">EP3Faith</string>
+    <string name="profiel">Profiel</string>
+    <string name="naamLabel">Naam:</string>
+    <string name="avatar">Avatar</string>
+    <string name="naamButton">Naam</string>
+    <string name="wijzig">Wijzig</string>
+    <string name="naam" />
+    <string name="opslaan">opslaan</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
