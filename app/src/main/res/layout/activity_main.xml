@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <layout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -9,79 +11,41 @@
             type="com.example.ep3faith.Jongere" />
     </data>
 
-    <LinearLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_small"
+        android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/profielText"
-            style="@style/standard_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/profiel"
-            android:textAlignment="center" />
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/naamLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_small"
-                android:text="@string/naamLabel"
-                style="@style/standard_text" />
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/myNavHostFragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="413dp"
+                android:layout_height="730dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navGraph="@navigation/navigation"
+                app:defaultNavHost="true"
+                tools:layout="@layout/fragment_time_line">
 
-            <TextView
-                android:id="@+id/naamText"
-                style="@style/standard_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@={jongere.naam}"/>
+            </androidx.fragment.app.FragmentContainerView>
 
-            <EditText
-                android:id="@+id/naamInput"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:ems="10"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:labelFor="@id/naamInput"
-                android:minHeight="48dp"
-                android:text="@string/naam"
-                android:visibility="gone"
-                tools:ignore="SpeakableTextPresentCheck"
-                tools:visibility="visible" />
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/imageView"
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:contentDescription="@string/avatar"
-            app:srcCompat="@drawable/avatar"
-            tools:ignore="ImageContrastCheck"
-            tools:srcCompat="@drawable/avatar" />
+            android:layout_gravity="start"
+            app:menu="@menu/navdrawer_menu" />
 
-        <Button
-            android:id="@+id/wijzigButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wijzig" />
+    </androidx.drawerlayout.widget.DrawerLayout>
 
-        <Button
-            android:id="@+id/opslaanButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/opslaan"
-            android:textSize="14sp"
-            android:visibility="gone" />
-    </LinearLayout>
+
 </layout>

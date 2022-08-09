@@ -3,6 +3,7 @@
     package="com.example.ep3faith">
 
     <application
+        android:name=".FaithApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="FAITH"

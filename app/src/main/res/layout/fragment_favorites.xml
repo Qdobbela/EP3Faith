@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
-        android:id="@+id/timelineFragment"
+        android:id="@+id/favoritesFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".TimeLineFragment">
+        tools:context=".FavoritesFragment">
 
         <!-- TODO: Update blank fragment layout -->
         <TextView
@@ -15,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="This will be the timeline" />
-
+            android:text="You will be able to see the favorites here"
+            android:textSize="14sp" />
     </FrameLayout>
 </layout>

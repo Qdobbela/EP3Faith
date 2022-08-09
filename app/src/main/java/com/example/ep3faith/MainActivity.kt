@@ -1,18 +1,22 @@
 package com.example.ep3faith
 
-import android.database.DatabaseUtils
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import com.example.ep3faith.databinding.ActivityMainBinding
+import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private val jongere: Jongere = Jongere("John Doe")
 
@@ -20,26 +24,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.jongere = jongere
+        drawerLayout = binding.drawerLayout
 
-        binding.wijzigButton.setOnClickListener{
-            binding.apply{
-                naamText.visibility = View.GONE
-                wijzigButton.visibility = View.GONE
-                naamInput.visibility = View.VISIBLE
-                opslaanButton.visibility = View.VISIBLE
-            }
-        }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
+        NavigationUI.setupWithNavController(binding.navView, navController)
 
-        binding.opslaanButton.setOnClickListener{
-            binding.apply{
-                jongere?.naam = naamInput.text.toString()
-                invalidateAll()
-                naamText.visibility = View.VISIBLE
-                wijzigButton.visibility = View.VISIBLE
 
-                naamInput.visibility = View.GONE
-                opslaanButton.visibility = View.GONE
-            }
-        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        Timber.i("Navigating up")
+        val navController = this.findNavController(R.id.myNavHostFragment)
+        return NavigationUI.navigateUp(navController, drawerLayout)
     }
 }
