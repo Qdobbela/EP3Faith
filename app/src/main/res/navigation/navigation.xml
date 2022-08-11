@@ -10,10 +10,10 @@
         android:label="ProfileFragment" />
     <fragment
         android:id="@+id/timeLineFragment"
-        android:name="com.example.ep3faith.TimeLineFragment"
+        android:name="com.example.ep3faith.timeline.TimeLineFragment"
         android:label="TimeLineFragment" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.ep3faith.FavoritesFragment"
+        android:name="com.example.ep3faith.favorites.FavoritesFragment"
         android:label="FavoritesFragment" />
 </navigation>

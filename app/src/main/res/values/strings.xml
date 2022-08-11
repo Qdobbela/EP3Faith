@@ -13,4 +13,9 @@
     <string name="timeline">Tijdlijn</string>
     <string name="Profile" />
     <string name="profile">Profiel</string>
+    <string name="username_label">Username:</string>
+    <string name="nicerdicer">NicerDicer</string>
+    <string name="profilepicture_label" >Profielfoto:</string>
+    <string name="this_is_profilepicture">Dit is de profielfoto</string>
+    <string name="username">Username</string>
 </resources>
