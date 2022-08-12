@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     Timber.i("Login succes")
                     val accessToken = credentials.accessToken
                     val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.putExtra("accestoken", accessToken)
                     startActivity(intent)
                 }
             })

@@ -8,7 +8,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.ep3faith.R
+import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
+import com.example.ep3faith.profile.ProfileViewModel
+import com.example.ep3faith.profile.ProfileViewModelFactory
 
 /**
  * A simple [Fragment] subclass.
@@ -31,7 +34,11 @@ class TimeLineFragment : Fragment() {
     ): View {
         val binding: FragmentTimeLineBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_time_line, container, false)
 
-        viewModel = ViewModelProvider(this)[TimeLineViewModel::class.java]
+        //get viewModel through factory
+        val application = requireNotNull(this.activity).application
+        val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
+        val viewModelFactory = TimeLineViewModelFactory(dataSource, application)
+        viewModel = ViewModelProvider(this, viewModelFactory)[TimeLineViewModel::class.java]
 
         return binding.root
     }

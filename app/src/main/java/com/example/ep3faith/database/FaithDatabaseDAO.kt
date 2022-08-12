@@ -8,22 +8,11 @@ import androidx.room.Query
 @Dao
 interface FaithDatabaseDAO {
 
-    //add new youngster
+    @Query("SELECT * FROM user_table WHERE email = :email")
+    public fun getUserByEmail(email: String): User
+
     @Insert
-    fun insertYoungster(user: User)
-
-    //update youngster
-    @Update
-    fun updateYoungster(user: User)
-
-    //get youngster with id
-    @Query("SELECT * FROM youngster_table where id = :id")
-    fun getYoungster(id: Long): User?
-
-    //delete youngster with id
-    @Query("DELETE FROM youngster_table where id = :id")
-    fun deleteYoungster(id: Long)
-
+    public fun insertUsers(users: List<User>)
 
 
 }
