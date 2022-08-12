@@ -15,7 +15,20 @@
     <string name="profile">Profiel</string>
     <string name="username_label">Username:</string>
     <string name="nicerdicer">NicerDicer</string>
-    <string name="profilepicture_label" >Profielfoto:</string>
+    <string name="profilepicture_label">Profielfoto:</string>
     <string name="this_is_profilepicture">Dit is de profielfoto</string>
     <string name="username">Username</string>
+    <string name="com_auth0_domain">dev-4i-4zxou.us.auth0.com</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login">Login</string>
+    <string name="logout">Afmelden</string>
+
 </resources>

@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.ep3faith.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginActivity"
+            app:destination="@id/loginActivity" />
+    </fragment>
     <fragment
         android:id="@+id/timeLineFragment"
         android:name="com.example.ep3faith.timeline.TimeLineFragment"
@@ -16,4 +20,8 @@
         android:id="@+id/favoritesFragment"
         android:name="com.example.ep3faith.favorites.FavoritesFragment"
         android:label="FavoritesFragment" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.ep3faith.LoginActivity"
+        android:label="LoginActivity" />
 </navigation>

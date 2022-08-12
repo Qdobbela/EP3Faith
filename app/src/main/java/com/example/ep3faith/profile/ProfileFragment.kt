@@ -1,7 +1,7 @@
 package com.example.ep3faith.profile
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +9,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.ep3faith.MainActivity
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentProfileBinding
@@ -21,6 +23,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var wijzigButton: Button
     private lateinit var opslaanButton: Button
+    private lateinit var logoutButton: Button
     private lateinit var editUsername: EditText
     private lateinit var usernameText: TextView
 
@@ -50,6 +53,7 @@ class ProfileFragment : Fragment() {
         opslaanButton = binding.opslaanButton
         usernameText = binding.usernameTextView
         editUsername = binding.usernameEditPlainText
+        logoutButton = binding.logoutButton
 
         usernameText.text = viewModel.username.value
         editUsername.setText(viewModel.username.value)
@@ -68,6 +72,10 @@ class ProfileFragment : Fragment() {
             usernameText.visibility = View.VISIBLE
             opslaanButton.visibility = View.GONE
             editUsername.visibility = View.GONE
+        }
+
+        logoutButton.setOnClickListener {
+            (activity as MainActivity).logout()
         }
 
         return binding.root
