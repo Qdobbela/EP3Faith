@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,11 +14,16 @@ import androidx.navigation.ui.NavigationUI
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.AuthenticationException
+import com.auth0.android.authentication.storage.CredentialsManager
+import com.auth0.android.authentication.storage.CredentialsManagerException
+import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.provider.WebAuthProvider
+import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.databinding.ActivityMainBinding
 import timber.log.Timber
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var account: Auth0
     private lateinit var accesToken: String
     lateinit var user: UserProfile
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = binding.drawerLayout
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.myNavHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
 
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
@@ -54,24 +61,12 @@ class MainActivity : AppCompatActivity() {
             accesToken = extras.getString("accestoken").toString()
         }
 
-        showUserProfile(accesToken)
-    }
+        val apiClient = AuthenticationAPIClient(account)
+        val manager = CredentialsManager(apiClient, SharedPreferencesStorage(this))
 
-    private fun showUserProfile(accessToken: String) {
-        var client = AuthenticationAPIClient(account)
-
-        // With the access token, call `userInfo` and get the profile from Auth0.
-        client.userInfo(accessToken)
-            .start(object : Callback<UserProfile, AuthenticationException> {
-                override fun onFailure(exception: AuthenticationException) {
-                    // Something went wrong!
-                }
-
-                override fun onSuccess(profile: UserProfile) {
-                    // We have the user's profile!
-                    user = profile
-                }
-            })
+        Timber.i("about to safe credentials")
+        val credentials = Credentials("", accesToken, "", "", Date(2022,81,6), "")
+        manager.saveCredentials(credentials)
     }
 
     override fun onSupportNavigateUp(): Boolean {

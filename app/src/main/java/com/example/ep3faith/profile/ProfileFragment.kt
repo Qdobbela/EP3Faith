@@ -1,6 +1,5 @@
 package com.example.ep3faith.profile
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +19,7 @@ import timber.log.Timber
 class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: ProfileViewModel
+    private lateinit var userMail: String
 
     private lateinit var wijzigButton: Button
     private lateinit var opslaanButton: Button
@@ -55,8 +55,8 @@ class ProfileFragment : Fragment() {
         editUsername = binding.usernameEditPlainText
         logoutButton = binding.logoutButton
 
-        usernameText.text = viewModel.username.value
-        editUsername.setText(viewModel.username.value)
+        usernameText.text = viewModel.user.value?.username
+        editUsername.setText(viewModel.user.value?.username)
 
         wijzigButton.setOnClickListener{
             wijzigButton.visibility = View.GONE
@@ -87,6 +87,7 @@ class ProfileFragment : Fragment() {
         fun newInstance() =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
+
                 }
             }
     }

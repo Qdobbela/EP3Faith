@@ -39,6 +39,7 @@ class TimeLineFragment : Fragment() {
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = TimeLineViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory)[TimeLineViewModel::class.java]
+        viewModel
 
         return binding.root
     }

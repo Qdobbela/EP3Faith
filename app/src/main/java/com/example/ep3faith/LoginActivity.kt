@@ -34,8 +34,6 @@ class LoginActivity : AppCompatActivity() {
             "dev-4i-4zxou.us.auth0.com"
         )
 
-        loginWithBrowser()
-
         loginButton.setOnClickListener{
             loginWithBrowser()
         }
