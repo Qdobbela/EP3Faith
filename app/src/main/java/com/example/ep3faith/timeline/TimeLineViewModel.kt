@@ -2,6 +2,8 @@ package com.example.ep3faith.timeline
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.storage.CredentialsManager
@@ -10,6 +12,7 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.example.ep3faith.database.FaithDatabaseDAO
+import com.example.ep3faith.database.Post
 import com.example.ep3faith.database.User
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -20,12 +23,23 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
 
+    private var _posts = MutableLiveData<List<Post>>()
+    val posts: LiveData<List<Post>>
+        get() = _posts
+
 
     init {
         Timber.i("Initialized")
         initDB()
-
+        intiPosts()
         getCredentials()
+    }
+
+    private fun intiPosts() {
+        _posts.value = listOf(
+            Post("NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
+            Post("PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        )
     }
 
     private fun initDB() {

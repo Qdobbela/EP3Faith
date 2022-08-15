@@ -6,12 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
 import com.example.ep3faith.profile.ProfileViewModel
 import com.example.ep3faith.profile.ProfileViewModelFactory
+import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +45,20 @@ class TimeLineFragment : Fragment() {
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = TimeLineViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory)[TimeLineViewModel::class.java]
-        viewModel
+
+        binding.timelineViewModel = viewModel
+        binding.lifecycleOwner = this
+
+        val adapter = PostAdapter()
+        binding.postList.adapter = adapter
+        val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(this.context)
+        binding.postList.layoutManager = linearLayoutManager
+
+        viewModel.posts.observe(viewLifecycleOwner, Observer{
+            it?.let{
+                adapter.data = it
+            }
+        })
 
         return binding.root
     }

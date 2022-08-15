@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="timelineViewModel"
+            type="com.example.ep3faith.timeline.TimeLineViewModel" />
+    </data>
+
+
 
     <FrameLayout
         android:id="@+id/timelineFragment"
@@ -9,13 +19,13 @@
         android:layout_height="match_parent"
         tools:context=".TimeLineFragment">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:id="@+id/mockText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="This will be the timeline" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/postList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+        />
 
     </FrameLayout>
 </layout>
