@@ -21,7 +21,14 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
+    private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
+    private val initPosts: List<Post> = listOf(
+        Post("1","NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
+        Post("2","PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post("3","PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post("4","PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post("5","PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+    )
 
     private var _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>>
@@ -31,34 +38,37 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     init {
         Timber.i("Initialized")
         initDB()
-        intiPosts()
         getCredentials()
-    }
-
-    private fun intiPosts() {
-        _posts.value = listOf(
-            Post("NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
-            Post("PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        )
     }
 
     private fun initDB() {
         uiScope.launch {
             dbClear()
             dBinit()
+            _posts.value = getPosts()
         }
     }
 
     private suspend fun dbClear() {
         withContext(Dispatchers.IO) {
-            database.clear()
+            database.clearUsers()
+            database.clearPosts()
         }
     }
 
     private suspend fun dBinit(){
         withContext(Dispatchers.IO) {
             database.insertUsers(users)
+            database.insertPosts(initPosts)
         }
+    }
+
+    private suspend fun getPosts(): List<Post>{
+        var posts: List<Post>
+        withContext(Dispatchers.IO){
+            posts = database.getPosts()
+        }
+        return posts
     }
 
     override fun onCleared() {
@@ -67,7 +77,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     }
 
     private fun getCredentials(){
-        var account = Auth0(
+        val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
         )

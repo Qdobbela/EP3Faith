@@ -6,17 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
-import com.example.ep3faith.profile.ProfileViewModel
-import com.example.ep3faith.profile.ProfileViewModelFactory
 import timber.log.Timber
 
 /**
@@ -51,12 +45,14 @@ class TimeLineFragment : Fragment() {
 
         val adapter = PostAdapter()
         binding.postList.adapter = adapter
-        val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(this.context)
-        binding.postList.layoutManager = linearLayoutManager
+
+        Timber.i("Linearlayoutmanager: %s", binding.postList.layoutManager.toString())
+
+        Timber.i("amount of posts: %d", adapter.itemCount)
 
         viewModel.posts.observe(viewLifecycleOwner, Observer{
             it?.let{
-                adapter.data = it
+                adapter.submitList(it)
             }
         })
 

@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.profile.ProfileViewModel
 
 class TimeLineViewModelFactory(
     private val dataSource: FaithDatabaseDAO,

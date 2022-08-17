@@ -15,9 +15,17 @@ interface FaithDatabaseDAO {
     public fun insertUsers(users: List<User>)
 
     @Query("DELETE FROM user_table")
-    public fun clear()
+    public fun clearUsers()
+
+    @Query("DELETE FROM post_table")
+    public fun clearPosts()
 
     @Update
     public fun updateUser(user: User)
 
+    @Insert
+    public fun insertPosts(posts: List<Post>)
+
+    @Query("SELECT * FROM post_table")
+    public fun getPosts(): List<Post>
 }
