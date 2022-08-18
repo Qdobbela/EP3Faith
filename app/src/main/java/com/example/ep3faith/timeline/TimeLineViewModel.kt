@@ -24,13 +24,13 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
-    private val initPosts: List<Post> = listOf(
+    /*private val initPosts: List<Post> = listOf(
         Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-    )
+    )*/
     private lateinit var user: User
 
     //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
@@ -53,16 +53,16 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     private fun initDB() {
         uiScope.launch {
-            //dbClear()
-            //dBinit()
+            dbClear()
+            dBinit()
             gatherPosts()
         }
     }
 
     private suspend fun dBinit(){
         withContext(Dispatchers.IO) {
-            database.insertUsers(users)
-            database.insertPosts(initPosts)
+           database.insertUsers(users)
+            //database.insertPosts(initPosts)
         }
     }
 
@@ -88,7 +88,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     private suspend fun dbClear() {
         withContext(Dispatchers.IO) {
             database.clearUsers()
-            database.clearPosts()
+            //database.clearPosts()
         }
     }
     override fun onCleared() {

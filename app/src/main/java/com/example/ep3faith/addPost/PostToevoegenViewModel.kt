@@ -1,6 +1,9 @@
 package com.example.ep3faith.addPost
 
 import android.app.Application
+import android.content.Intent
+import android.net.Uri
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +22,7 @@ import com.example.ep3faith.database.User
 import kotlinx.coroutines.*
 import timber.log.Timber
 
+
 class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -32,8 +36,11 @@ class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Applic
         getCredentials()
     }
 
-    fun postOpslaan(caption: String, link: String) {
-        val post = Post( 0, user.username, caption, "", link)
+    //SAVING A POST TO THE DB
+
+    fun postOpslaan(caption: String, link: String, imageUri: Uri) {
+        Timber.i("imageuri to string: %s", imageUri.toString())
+        val post = Post( 0, user.username, caption, imageUri.toString(), link)
         uiScope.launch {
             _saved.value = dbPostOpslaan(post)
         }

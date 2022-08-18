@@ -37,7 +37,7 @@
             app:layout_constraintHorizontal_bias="0.153"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/grandma_tree" />
+            app:imageUri="@{post}" />
 
         <TextView
             android:id="@+id/captionTextView"

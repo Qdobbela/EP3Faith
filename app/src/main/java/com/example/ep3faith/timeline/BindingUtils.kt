@@ -1,8 +1,10 @@
 package com.example.ep3faith.timeline
 
+import android.net.Uri
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.ep3faith.database.Post
@@ -28,5 +30,12 @@ fun TextView.setLinkString(item: Post?){
         val link = URLSpan(item.link)
         this.movementMethod = LinkMovementMethod.getInstance()
         text = link.url
+    }
+}
+
+@BindingAdapter("imageUri")
+fun ImageView.setImageUri(item: Post?){
+    item?.let {
+        setImageURI(Uri.parse(item.picture))
     }
 }
