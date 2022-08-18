@@ -14,14 +14,15 @@
         <argument
             android:name="userMail"
             app:argType="string" />
-        <action
-            android:id="@+id/action_profileFragment_to_postToevoegenFragment"
-            app:destination="@id/postToevoegenFragment" />
     </fragment>
     <fragment
         android:id="@+id/timeLineFragment"
         android:name="com.example.ep3faith.timeline.TimeLineFragment"
-        android:label="TimeLineFragment" />
+        android:label="TimeLineFragment" >
+        <action
+            android:id="@+id/action_timeLineFragment_to_postToevoegenFragment"
+            app:destination="@id/postToevoegenFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.ep3faith.favorites.FavoritesFragment"
@@ -32,6 +33,10 @@
         android:label="LoginActivity" />
     <fragment
         android:id="@+id/postToevoegenFragment"
-        android:name="com.example.ep3faith.timeline.PostToevoegenFragment"
-        android:label="PostToevoegenFragment" />
+        android:name="com.example.ep3faith.addPost.PostToevoegenFragment"
+        android:label="PostToevoegenFragment" >
+        <action
+            android:id="@+id/action_postToevoegenFragment_to_timeLineFragment"
+            app:destination="@id/timeLineFragment" />
+    </fragment>
 </navigation>

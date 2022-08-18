@@ -28,4 +28,7 @@ interface FaithDatabaseDAO {
 
     @Query("SELECT * FROM post_table")
     public fun getPosts(): List<Post>
+
+    @Insert
+    public fun insertPost(post: Post)
 }

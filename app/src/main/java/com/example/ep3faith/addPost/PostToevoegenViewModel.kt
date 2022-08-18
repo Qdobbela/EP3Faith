@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.addPost
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -19,84 +19,32 @@ import com.example.ep3faith.database.User
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
-
+class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
-    private val initPosts: List<Post> = listOf(
-        Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-    )
-    private lateinit var user: User
+    private lateinit var user : User
 
-    //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
     private var _saved = MutableLiveData<Boolean>()
     val saved: LiveData<Boolean>
         get() = _saved
 
-    private var _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>>
-        get() = _posts
-
-
     init {
-        Timber.i("Initialized")
-        initDB()
         getCredentials()
     }
 
-    //INITIALIZE THE DB
-
-    private fun initDB() {
+    fun postOpslaan(caption: String, link: String) {
+        val post = Post( 0, user.username, caption, "", link)
         uiScope.launch {
-            //dbClear()
-            //dBinit()
-            gatherPosts()
+            _saved.value = dbPostOpslaan(post)
         }
     }
 
-    private suspend fun dBinit(){
+    private suspend fun dbPostOpslaan(post: Post): Boolean{
         withContext(Dispatchers.IO) {
-            database.insertUsers(users)
-            database.insertPosts(initPosts)
+            database.insertPost(post)
         }
+        return true
     }
-
-    //GET THE POSTS FROM THE DB
-
-    fun gatherPosts(){
-        uiScope.launch {
-            Timber.i("Gathering Posts")
-            _posts.value = getPosts()
-        }
-    }
-
-    private suspend fun getPosts(): List<Post>{
-        var posts: List<Post>
-        withContext(Dispatchers.IO){
-            posts = database.getPosts()
-        }
-        return posts
-    }
-
-    //CLEAR THE DB
-
-    private suspend fun dbClear() {
-        withContext(Dispatchers.IO) {
-            database.clearUsers()
-            database.clearPosts()
-        }
-    }
-    override fun onCleared() {
-        super.onCleared()
-        Timber.i("Cleared")
-    }
-
-
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS

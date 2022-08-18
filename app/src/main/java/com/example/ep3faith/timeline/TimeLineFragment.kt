@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
@@ -46,15 +47,15 @@ class TimeLineFragment : Fragment() {
         val adapter = PostAdapter()
         binding.postList.adapter = adapter
 
-        Timber.i("Linearlayoutmanager: %s", binding.postList.layoutManager.toString())
-
-        Timber.i("amount of posts: %d", adapter.itemCount)
-
         viewModel.posts.observe(viewLifecycleOwner, Observer{
             it?.let{
                 adapter.submitList(it)
             }
         })
+
+        binding.nieuwePostButton.setOnClickListener (
+            Navigation.createNavigateOnClickListener(R.id.action_timeLineFragment_to_postToevoegenFragment)
+            )
 
         return binding.root
     }
