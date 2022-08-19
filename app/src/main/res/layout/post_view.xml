@@ -7,12 +7,16 @@
         <variable
             name="post"
             type="com.example.ep3faith.database.Post" />
+        <variable
+            name="clickListener"
+            type="com.example.ep3faith.timeline.PostAdapter.PostFavoriteListener"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_medium">
+        android:layout_margin="@dimen/padding_medium"
+        android:background="#EDEDED">
 
         <TextView
             android:id="@+id/postUsernameTextView"
@@ -25,19 +29,21 @@
             app:layout_constraintStart_toStartOf="@+id/postImageView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:usernameString="@{post}"/>
+            app:usernameString="@{post}" />
 
         <ImageView
             android:id="@+id/postImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="229dp"
+            android:layout_height="227dp"
             android:layout_marginTop="40dp"
+            android:maxWidth="300dp"
+            android:maxHeight="300dp"
             android:padding="@dimen/padding_small"
+            app:imageUri="@{post}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.153"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:imageUri="@{post}" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/captionTextView"
@@ -47,23 +53,32 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:text="Caption"
+            app:captionString="@{post}"
             app:layout_constraintStart_toStartOf="@+id/postImageView"
-            app:layout_constraintTop_toBottomOf="@+id/postImageView"
-            app:captionString="@{post}"/>
+            app:layout_constraintTop_toBottomOf="@+id/postImageView" />
 
         <TextView
             android:id="@+id/linkTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="@dimen/padding_small"
             android:autoLink="web"
             android:text="http://link"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/captionTextView"
             app:layout_constraintTop_toBottomOf="@+id/captionTextView"
             app:layout_constraintVertical_bias="0.0"
             app:linkString="@{post}" />
+
+        <ImageView
+            android:id="@+id/favoriteImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/linkTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@android:drawable/btn_star"
+            android:onClick="@{() -> clickListener.onClick(post)}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

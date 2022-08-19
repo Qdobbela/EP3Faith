@@ -13,9 +13,7 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
-import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.database.Post
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -48,6 +46,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         initDB()
         getCredentials()
     }
+
 
     //INITIALIZE THE DB
 
@@ -96,7 +95,35 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         Timber.i("Cleared")
     }
 
+    // ADDING AND RETRIEVING FAVORITES TO DB
 
+    fun addFavorite(postId: Int) {
+        Timber.i("adding a favorite")
+        val favorite = UserFavoritePostsCrossRef(user.email, postId)
+        uiScope.launch {
+            favoriteToDb(favorite)
+        }
+    }
+
+    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef){
+        withContext(Dispatchers.IO){
+            database.insertFavorite(favorite)
+        }
+    }
+
+
+    private fun getFavorites(email: String) {
+        uiScope.launch {
+            getFavoritesDb(email)
+        }
+    }
+
+    private suspend fun getFavoritesDb(email: String) {
+        Timber.i("Getting Favorites")
+        withContext(Dispatchers.IO){
+            database.getUserWithFavorites(email)
+        }
+    }
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS

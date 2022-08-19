@@ -1,9 +1,7 @@
 package com.example.ep3faith.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Update
-import androidx.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 @Dao
 interface FaithDatabaseDAO {
@@ -31,4 +29,12 @@ interface FaithDatabaseDAO {
 
     @Insert
     public fun insertPost(post: Post)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public fun insertFavorite(favorite: UserFavoritePostsCrossRef)
+
+    @Transaction
+    @Query("SELECT * FROM user_table WHERE email = :email")
+    public fun getUserWithFavorites(email: String): UserWithPosts
+
 }

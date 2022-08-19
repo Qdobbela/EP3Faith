@@ -51,7 +51,7 @@ class PostToevoegenFragment : Fragment() {
             }
         })
 
-        val getImage =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        val getImage =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             binding.imageView2.setImageURI(uri)
             if (uri != null) {
                 imageUri = uri
@@ -59,7 +59,7 @@ class PostToevoegenFragment : Fragment() {
         }
 
         binding.choosePictureButton.setOnClickListener {
-            getImage.launch("image/*")
+            getImage.launch(arrayOf("image/*"))
         }
         return binding.root
     }

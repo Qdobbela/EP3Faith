@@ -44,7 +44,10 @@ class TimeLineFragment : Fragment() {
         binding.timelineViewModel = viewModel
         binding.lifecycleOwner = this
 
-        val adapter = PostAdapter()
+        val adapter = PostAdapter(PostAdapter.PostFavoriteListener { postId ->
+            viewModel.addFavorite(postId)
+        })
+
         binding.postList.adapter = adapter
 
         viewModel.posts.observe(viewLifecycleOwner, Observer{
@@ -56,6 +59,8 @@ class TimeLineFragment : Fragment() {
         binding.nieuwePostButton.setOnClickListener (
             Navigation.createNavigateOnClickListener(R.id.action_timeLineFragment_to_postToevoegenFragment)
             )
+
+
 
         return binding.root
     }

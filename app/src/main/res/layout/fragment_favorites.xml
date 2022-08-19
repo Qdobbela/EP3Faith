@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
+
+    <data>
+        <variable
+            name="favoriteViewModel"
+            type="com.example.ep3faith.favorites.FavoritesViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/favoritesFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".FavoritesFragment">
+        android:layout_height="match_parent">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:id="@+id/mockText"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favoriteList"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="You will be able to see the favorites here"
-            android:textSize="14sp" />
-    </FrameLayout>
+            android:layout_height="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

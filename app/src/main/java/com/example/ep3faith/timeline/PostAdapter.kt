@@ -8,13 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.database.Post
 import com.example.ep3faith.databinding.PostViewBinding
 
-class PostAdapter: ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
+class PostAdapter(val clickListener: PostFavoriteListener): ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val item = getItem(position)
 
-        holder.bind(item)
+        holder.bind(clickListener, getItem(position)!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -23,8 +22,9 @@ class PostAdapter: ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallbac
 
     class PostViewHolder private constructor(val binding: PostViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: Post) {
+        fun bind(clickListener: PostFavoriteListener, item: Post) {
             binding.post = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
 
@@ -46,6 +46,10 @@ class PostAdapter: ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallbac
             return oldItem == newItem
         }
 
+    }
+
+    class PostFavoriteListener(val clickListener: (postId: Int) -> Unit) {
+        fun onClick(post: Post) = clickListener(post.postId)
     }
 
 
