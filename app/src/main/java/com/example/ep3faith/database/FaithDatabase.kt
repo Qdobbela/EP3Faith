@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class, Post::class, UserFavoritePostsCrossRef::class], version = 5, exportSchema = false)
+@Database(entities = [User::class, Post::class, UserFavoritePostsCrossRef::class, Reaction::class], version = 9, exportSchema = false)
 abstract class FaithDatabase: RoomDatabase() {
     abstract val faithDatabaseDAO: FaithDatabaseDAO
 

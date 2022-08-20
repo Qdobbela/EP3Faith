@@ -1,41 +1,54 @@
 package com.example.ep3faith.timeline
 
 import android.net.Uri
-import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.ep3faith.database.Post
-import timber.log.Timber
+import com.example.ep3faith.database.PostWithReactions
+import com.example.ep3faith.database.Reaction
 
 @BindingAdapter("usernameString")
-fun TextView.setUsernameString(item: Post?){
+fun TextView.setUsernameString(item: PostWithReactions?){
     item?.let {
-        text = item.username
+        text = item.post.username
     }
 }
 
 @BindingAdapter("captionString")
-fun TextView.setCaptionString(item: Post?){
+fun TextView.setCaptionString(item: PostWithReactions?){
     item?.let {
-        text = item.caption
+        text = item.post.caption
     }
 }
 
 @BindingAdapter("linkString")
-fun TextView.setLinkString(item: Post?){
+fun TextView.setLinkString(item: PostWithReactions?){
     item?.let {
-        val link = URLSpan(item.link)
+        val link = URLSpan(item.post.link)
         this.movementMethod = LinkMovementMethod.getInstance()
         text = link.url
     }
 }
 
 @BindingAdapter("imageUri")
-fun ImageView.setImageUri(item: Post?){
+fun ImageView.setImageUri(item: PostWithReactions?){
     item?.let {
-        setImageURI(Uri.parse(item.picture))
+        setImageURI(Uri.parse(item.post.picture))
+    }
+}
+
+@BindingAdapter("reactionUser")
+fun TextView.setReactionUsernameString(item: Reaction?){
+    item?.let {
+        text = item.reactionUser
+    }
+}
+@BindingAdapter("reaction")
+fun TextView.setReactionString(item: Reaction?){
+    item?.let {
+        text = item.reactionText
     }
 }

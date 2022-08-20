@@ -29,16 +29,17 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
     )*/
-    private lateinit var user: User
+    lateinit var user: User
 
     //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
     private var _saved = MutableLiveData<Boolean>()
     val saved: LiveData<Boolean>
         get() = _saved
 
-    private var _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>>
+    private var _posts = MutableLiveData<List<PostWithReactions>>()
+    val posts: LiveData<List<PostWithReactions>>
         get() = _posts
+
 
 
     init {
@@ -74,10 +75,10 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun getPosts(): List<Post>{
-        var posts: List<Post>
+    private suspend fun getPosts(): List<PostWithReactions>{
+        var posts: List<PostWithReactions>
         withContext(Dispatchers.IO){
-            posts = database.getPosts()
+            posts = database.getPostWithReactions()
         }
         return posts
     }
@@ -111,19 +112,23 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
+    // ADDING REACTIONS
 
-    private fun getFavorites(email: String) {
+    fun addReaction(reactionText: String, postId: Int) {
+        Timber.i("reaction text: %s", reactionText)
+        val reaction = Reaction(0, reactionText, user.username, postId)
         uiScope.launch {
-            getFavoritesDb(email)
+            insertReactionDb(reaction)
+        }
+        gatherPosts()
+    }
+
+    private suspend fun insertReactionDb(reaction: Reaction){
+        withContext(Dispatchers.IO){
+            database.insertReaction(reaction)
         }
     }
 
-    private suspend fun getFavoritesDb(email: String) {
-        Timber.i("Getting Favorites")
-        withContext(Dispatchers.IO){
-            database.getUserWithFavorites(email)
-        }
-    }
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
@@ -187,5 +192,4 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
         return userByMail
     }
-
 }

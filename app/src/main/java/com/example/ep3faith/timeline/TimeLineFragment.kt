@@ -5,13 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
+import com.example.ep3faith.database.Reaction
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
+import com.example.ep3faith.databinding.PostViewBinding
 import timber.log.Timber
 
 /**
@@ -22,6 +28,7 @@ import timber.log.Timber
 class TimeLineFragment : Fragment() {
 
     private lateinit var viewModel: TimeLineViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +53,13 @@ class TimeLineFragment : Fragment() {
 
         val adapter = PostAdapter(PostAdapter.PostFavoriteListener { postId ->
             viewModel.addFavorite(postId)
+        },
+        PostAdapter.AddReactionListener { postId, pos ->
+            Timber.i("saving Reaction, recyclerpos: %s", pos)
+            val view = binding.postList.getChildAt(pos)
+            Timber.i("view: %s", view.toString())
+            val editText: EditText = view.findViewById(R.id.addReactionEditView)
+            viewModel.addReaction(editText.text.toString(), postId)
         })
 
         binding.postList.adapter = adapter
@@ -56,11 +70,11 @@ class TimeLineFragment : Fragment() {
             }
         })
 
+
+
         binding.nieuwePostButton.setOnClickListener (
             Navigation.createNavigateOnClickListener(R.id.action_timeLineFragment_to_postToevoegenFragment)
             )
-
-
 
         return binding.root
     }

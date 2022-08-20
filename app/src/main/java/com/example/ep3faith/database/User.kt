@@ -46,3 +46,35 @@ data class UserWithPosts(
     )
     val post: List<Post>
 )
+
+
+@Entity(tableName = "reaction_table")
+data class Reaction(
+
+    @PrimaryKey(autoGenerate = true)
+    var reactionId: Int,
+
+    var reactionText: String,
+
+    var reactionUser: String,
+
+    var hostPostId: Int
+)
+
+data class ReactionAndUser(
+    @Embedded val user: User,
+    @Relation(
+        parentColumn = "email",
+        entityColumn = "reactionUser"
+    )
+    val reaction: Reaction
+)
+
+data class PostWithReactions(
+    @Embedded val post: Post,
+    @Relation(
+        parentColumn = "postId",
+        entityColumn = "hostPostId"
+    )
+    val reactions: List<Reaction>
+)

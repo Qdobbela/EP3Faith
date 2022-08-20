@@ -5,11 +5,18 @@
 
     <data>
         <variable
-            name="post"
-            type="com.example.ep3faith.database.Post" />
+            name="postAndReactions"
+            type="com.example.ep3faith.database.PostWithReactions" />
         <variable
             name="clickListener"
             type="com.example.ep3faith.timeline.PostAdapter.PostFavoriteListener"/>
+        <variable
+            name="reactionClickListener"
+            type="com.example.ep3faith.timeline.PostAdapter.AddReactionListener"/>
+
+        <variable
+            name="position"
+            type="Integer"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +36,7 @@
             app:layout_constraintStart_toStartOf="@+id/postImageView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:usernameString="@{post}" />
+            app:usernameString="@{postAndReactions}" />
 
         <ImageView
             android:id="@+id/postImageView"
@@ -39,7 +46,7 @@
             android:maxWidth="300dp"
             android:maxHeight="300dp"
             android:padding="@dimen/padding_small"
-            app:imageUri="@{post}"
+            app:imageUri="@{postAndReactions}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.153"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +60,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:text="Caption"
-            app:captionString="@{post}"
+            app:captionString="@{postAndReactions}"
             app:layout_constraintStart_toStartOf="@+id/postImageView"
             app:layout_constraintTop_toBottomOf="@+id/postImageView" />
 
@@ -69,16 +76,51 @@
             app:layout_constraintStart_toStartOf="@+id/captionTextView"
             app:layout_constraintTop_toBottomOf="@+id/captionTextView"
             app:layout_constraintVertical_bias="0.0"
-            app:linkString="@{post}" />
+            app:linkString="@{postAndReactions}" />
 
         <ImageView
             android:id="@+id/favoriteImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:onClick="@{() -> clickListener.onClick(postAndReactions)}"
             app:layout_constraintBottom_toBottomOf="@+id/linkTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/btn_star"
-            android:onClick="@{() -> clickListener.onClick(post)}"/>
+            app:srcCompat="@android:drawable/btn_star" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reactionList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="32dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linkTextView"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <EditText
+            android:id="@+id/addReactionEditView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:ems="10"
+            android:hint="Type..."
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reactionList" />
+
+        <Button
+            android:id="@+id/reactionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Reageer"
+            android:onClick="@{() -> reactionClickListener.onClick(postAndReactions, position)}"
+            app:layout_constraintBottom_toBottomOf="@+id/addReactionEditView"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

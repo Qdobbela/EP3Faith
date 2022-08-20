@@ -37,4 +37,19 @@ interface FaithDatabaseDAO {
     @Query("SELECT * FROM user_table WHERE email = :email")
     public fun getUserWithFavorites(email: String): UserWithPosts
 
+    @Delete
+    fun deleteFavorite(favorite: UserFavoritePostsCrossRef)
+
+    @Insert
+    public fun insertReaction(reaction: Reaction)
+
+    @Transaction
+    @Query("SELECT * FROM post_table")
+    fun getPostWithReactions(): List<PostWithReactions>
+
+
+    @Transaction
+    @Query("SELECT * FROM post_table WHERE postId IN (:favorites)")
+    fun getFavoritesWithReactions(favorites: List<Int>): List<PostWithReactions>
+
 }

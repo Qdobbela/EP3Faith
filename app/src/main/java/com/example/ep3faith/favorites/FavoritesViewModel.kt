@@ -14,9 +14,7 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
-import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.database.Post
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -26,8 +24,8 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private lateinit var user: User
 
-    private var _favorites = MutableLiveData<List<Post>>()
-    val favorites: LiveData<List<Post>>
+    private var _favorites = MutableLiveData<List<PostWithReactions>>()
+    val favorites: LiveData<List<PostWithReactions>>
         get() = _favorites
 
     init {
@@ -42,15 +40,34 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     private suspend fun gatherFavoritesFromDb() {
         val posts: List<Post>
+        var postIdList: MutableList<Int> = mutableListOf<Int>()
+        var postReactionList: List<PostWithReactions> = listOf<PostWithReactions>()
         withContext(Dispatchers.IO){
             posts = database.getUserWithFavorites(user.email).post
+            for(post in posts){
+                postIdList.add(post.postId)
+            }
+            postReactionList = database.getFavoritesWithReactions(postIdList)
         }
-        _favorites.value = posts
+        _favorites.value = postReactionList
     }
 
     override fun onCleared() {
         super.onCleared()
         Timber.i("Cleared")
+    }
+
+    fun removeFavorite(postId: Int) {
+        uiScope.launch {
+            val favorite = UserFavoritePostsCrossRef(user.email,postId)
+            removeFavoriteDb(favorite)
+        }
+    }
+
+    private suspend fun removeFavoriteDb(favorite: UserFavoritePostsCrossRef) {
+        withContext(Dispatchers.IO){
+            database.deleteFavorite(favorite)
+        }
     }
 
     /*

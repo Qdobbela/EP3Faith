@@ -48,6 +48,8 @@ class FavoritesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         val adapter = PostAdapter(PostAdapter.PostFavoriteListener { postId ->
+            viewModel.removeFavorite(postId)
+        }, PostAdapter.AddReactionListener { postId, pos ->
 
         })
 
