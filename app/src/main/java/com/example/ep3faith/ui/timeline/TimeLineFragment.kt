@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.ui.timeline
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,18 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
-import com.example.ep3faith.database.Reaction
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
-import com.example.ep3faith.databinding.PostViewBinding
 import timber.log.Timber
 
 /**

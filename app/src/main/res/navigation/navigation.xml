@@ -6,7 +6,7 @@
     app:startDestination="@id/timeLineFragment">
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.ep3faith.profile.ProfileFragment"
+        android:name="com.example.ep3faith.ui.profile.ProfileFragment"
         android:label="ProfileFragment" >
         <action
             android:id="@+id/action_profileFragment_to_loginActivity"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/timeLineFragment"
-        android:name="com.example.ep3faith.timeline.TimeLineFragment"
+        android:name="com.example.ep3faith.ui.timeline.TimeLineFragment"
         android:label="TimeLineFragment" >
         <action
             android:id="@+id/action_timeLineFragment_to_postToevoegenFragment"
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.ep3faith.favorites.FavoritesFragment"
+        android:name="com.example.ep3faith.ui.favorites.FavoritesFragment"
         android:label="FavoritesFragment" />
     <activity
         android:id="@+id/loginActivity"
@@ -33,7 +33,7 @@
         android:label="LoginActivity" />
     <fragment
         android:id="@+id/postToevoegenFragment"
-        android:name="com.example.ep3faith.addPost.PostToevoegenFragment"
+        android:name="com.example.ep3faith.ui.addPost.PostToevoegenFragment"
         android:label="PostToevoegenFragment" >
         <action
             android:id="@+id/action_postToevoegenFragment_to_timeLineFragment"

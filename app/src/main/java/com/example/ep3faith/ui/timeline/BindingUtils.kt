@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.ui.timeline
 
 import android.net.Uri
 import android.text.method.LinkMovementMethod
@@ -6,7 +6,6 @@ import android.text.style.URLSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.ep3faith.database.Post
 import com.example.ep3faith.database.PostWithReactions
 import com.example.ep3faith.database.Reaction
 

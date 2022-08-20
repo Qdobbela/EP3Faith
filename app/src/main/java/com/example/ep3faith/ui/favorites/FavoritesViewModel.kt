@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.ui.favorites
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -17,118 +17,57 @@ import com.example.ep3faith.database.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class FavoritesViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", ""),User("quinten.dobbelaere@student.hogent.be", "tryhard", ""))
-    /*private val initPosts: List<Post> = listOf(
-        Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-    )*/
-    lateinit var user: User
+    private lateinit var user: User
 
-    //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
-    private var _saved = MutableLiveData<Boolean>()
-    val saved: LiveData<Boolean>
-        get() = _saved
-
-    private var _posts = MutableLiveData<List<PostWithReactions>>()
-    val posts: LiveData<List<PostWithReactions>>
-        get() = _posts
-
-
+    private var _favorites = MutableLiveData<List<PostWithReactions>>()
+    val favorites: LiveData<List<PostWithReactions>>
+        get() = _favorites
 
     init {
-        Timber.i("Initialized")
-        initDB()
         getCredentials()
     }
 
-
-    //INITIALIZE THE DB
-
-    private fun initDB() {
+    private fun gatherFavorites() {
         uiScope.launch {
-            dbClear()
-            dBinit()
-            gatherPosts()
+            gatherFavoritesFromDb()
         }
     }
 
-    private suspend fun dBinit(){
-        withContext(Dispatchers.IO) {
-           database.insertUsers(users)
-            //database.insertPosts(initPosts)
-        }
-    }
-
-    //GET THE POSTS FROM THE DB
-
-    fun gatherPosts(){
-        uiScope.launch {
-            Timber.i("Gathering Posts")
-            _posts.value = getPosts()
-        }
-    }
-
-    private suspend fun getPosts(): List<PostWithReactions>{
-        var posts: List<PostWithReactions>
+    private suspend fun gatherFavoritesFromDb() {
+        val posts: List<Post>
+        var postIdList: MutableList<Int> = mutableListOf<Int>()
+        var postReactionList: List<PostWithReactions> = listOf<PostWithReactions>()
         withContext(Dispatchers.IO){
-            posts = database.getPostWithReactions()
+            posts = database.getUserWithFavorites(user.email).post
+            for(post in posts){
+                postIdList.add(post.postId)
+            }
+            postReactionList = database.getFavoritesWithReactions(postIdList)
         }
-        return posts
+        _favorites.value = postReactionList
     }
 
-    //CLEAR THE DB
-
-    private suspend fun dbClear() {
-        withContext(Dispatchers.IO) {
-            database.clearUsers()
-            //database.clearPosts()
-        }
-    }
     override fun onCleared() {
         super.onCleared()
         Timber.i("Cleared")
     }
 
-    // ADDING AND RETRIEVING FAVORITES TO DB
-
-    fun addFavorite(postId: Int) {
-        Timber.i("adding a favorite")
-        val favorite = UserFavoritePostsCrossRef(user.email, postId)
+    fun removeFavorite(postId: Int) {
         uiScope.launch {
-            favoriteToDb(favorite)
+            val favorite = UserFavoritePostsCrossRef(user.email,postId)
+            removeFavoriteDb(favorite)
         }
     }
 
-    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef){
+    private suspend fun removeFavoriteDb(favorite: UserFavoritePostsCrossRef) {
         withContext(Dispatchers.IO){
-            database.insertFavorite(favorite)
+            database.deleteFavorite(favorite)
         }
     }
-
-    // ADDING REACTIONS
-
-    fun addReaction(reactionText: String, postId: Int) {
-        Timber.i("reaction text: %s", reactionText)
-        val reaction = Reaction(0, reactionText, user.username, postId)
-        uiScope.launch {
-            insertReactionDb(reaction)
-        }
-        gatherPosts()
-    }
-
-    private suspend fun insertReactionDb(reaction: Reaction){
-        withContext(Dispatchers.IO){
-            database.insertReaction(reaction)
-        }
-    }
-
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
@@ -182,6 +121,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         uiScope.launch {
             val theUser = getUserFromDB(email)
             user = theUser
+            gatherFavorites()
         }
     }
 

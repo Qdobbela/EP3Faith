@@ -1,4 +1,4 @@
-package com.example.ep3faith.favorites
+package com.example.ep3faith.ui.favorites
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,11 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentFavoritesBinding
-import com.example.ep3faith.profile.ProfileViewModel
-import com.example.ep3faith.timeline.PostAdapter
-import com.example.ep3faith.timeline.TimeLineViewModel
-import com.example.ep3faith.timeline.TimeLineViewModelFactory
-import timber.log.Timber
+import com.example.ep3faith.ui.timeline.PostAdapter
 
 /**
  * A simple [Fragment] subclass.

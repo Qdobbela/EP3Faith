@@ -1,10 +1,10 @@
-package com.example.ep3faith.favorites
+package com.example.ep3faith.ui.addPost
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.AuthenticationException
@@ -14,60 +14,40 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
-import com.example.ep3faith.database.*
+import com.example.ep3faith.database.FaithDatabaseDAO
+import com.example.ep3faith.database.Post
+import com.example.ep3faith.database.User
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class FavoritesViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
 
+class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private lateinit var user: User
+    private lateinit var user : User
 
-    private var _favorites = MutableLiveData<List<PostWithReactions>>()
-    val favorites: LiveData<List<PostWithReactions>>
-        get() = _favorites
+    private var _saved = MutableLiveData<Boolean>()
+    val saved: LiveData<Boolean>
+        get() = _saved
 
     init {
         getCredentials()
     }
 
-    private fun gatherFavorites() {
+    //SAVING A POST TO THE DB
+
+    fun postOpslaan(caption: String, link: String, imageUri: Uri) {
+        val post = Post( 0, user.username, caption, imageUri.toString(), link)
         uiScope.launch {
-            gatherFavoritesFromDb()
+            _saved.value = dbPostOpslaan(post)
         }
     }
 
-    private suspend fun gatherFavoritesFromDb() {
-        val posts: List<Post>
-        var postIdList: MutableList<Int> = mutableListOf<Int>()
-        var postReactionList: List<PostWithReactions> = listOf<PostWithReactions>()
-        withContext(Dispatchers.IO){
-            posts = database.getUserWithFavorites(user.email).post
-            for(post in posts){
-                postIdList.add(post.postId)
-            }
-            postReactionList = database.getFavoritesWithReactions(postIdList)
+    private suspend fun dbPostOpslaan(post: Post): Boolean{
+        withContext(Dispatchers.IO) {
+            database.insertPost(post)
         }
-        _favorites.value = postReactionList
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Timber.i("Cleared")
-    }
-
-    fun removeFavorite(postId: Int) {
-        uiScope.launch {
-            val favorite = UserFavoritePostsCrossRef(user.email,postId)
-            removeFavoriteDb(favorite)
-        }
-    }
-
-    private suspend fun removeFavoriteDb(favorite: UserFavoritePostsCrossRef) {
-        withContext(Dispatchers.IO){
-            database.deleteFavorite(favorite)
-        }
+        return true
     }
 
     /*
@@ -122,7 +102,6 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         uiScope.launch {
             val theUser = getUserFromDB(email)
             user = theUser
-            gatherFavorites()
         }
     }
 
@@ -133,4 +112,5 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         }
         return userByMail
     }
+
 }

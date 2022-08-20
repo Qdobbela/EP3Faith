@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.ui.timeline
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.database.PostWithReactions
 import com.example.ep3faith.databinding.PostViewBinding
-import timber.log.Timber
 
 class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 

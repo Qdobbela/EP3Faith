@@ -1,9 +1,6 @@
-package com.example.ep3faith.addPost
+package com.example.ep3faith.ui.timeline
 
 import android.app.Application
-import android.content.Intent
-import android.net.Uri
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,42 +13,122 @@ import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
-import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.database.Post
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
+class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
 
-class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private lateinit var user : User
+    private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", "content://com.android.providers.media.documents/document/image%3A107958"),User("quinten.dobbelaere@student.hogent.be", "tryhard", "content://com.android.providers.media.documents/document/image%3A107958"))
+    /*private val initPosts: List<Post> = listOf(
+        Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
+        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
+    )*/
+    lateinit var user: User
 
+    //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
     private var _saved = MutableLiveData<Boolean>()
     val saved: LiveData<Boolean>
         get() = _saved
 
+    private var _posts = MutableLiveData<List<PostWithReactions>>()
+    val posts: LiveData<List<PostWithReactions>>
+        get() = _posts
+
+
+
     init {
+        Timber.i("Initialized")
+        initDB()
         getCredentials()
     }
 
-    //SAVING A POST TO THE DB
 
-    fun postOpslaan(caption: String, link: String, imageUri: Uri) {
-        Timber.i("imageuri to string: %s", imageUri.toString())
-        val post = Post( 0, user.username, caption, imageUri.toString(), link)
+    //INITIALIZE THE DB
+
+    private fun initDB() {
         uiScope.launch {
-            _saved.value = dbPostOpslaan(post)
+            dbClear()
+            dBinit()
+            gatherPosts()
         }
     }
 
-    private suspend fun dbPostOpslaan(post: Post): Boolean{
+    private suspend fun dBinit(){
         withContext(Dispatchers.IO) {
-            database.insertPost(post)
+           database.insertUsers(users)
+            //database.insertPosts(initPosts)
         }
-        return true
     }
+
+    //GET THE POSTS FROM THE DB
+
+    fun gatherPosts(){
+        uiScope.launch {
+            Timber.i("Gathering Posts")
+            _posts.value = getPosts()
+        }
+    }
+
+    private suspend fun getPosts(): List<PostWithReactions>{
+        var posts: List<PostWithReactions>
+        withContext(Dispatchers.IO){
+            posts = database.getPostWithReactions()
+        }
+        return posts
+    }
+
+    //CLEAR THE DB
+
+    private suspend fun dbClear() {
+        withContext(Dispatchers.IO) {
+            database.clearUsers()
+            //database.clearPosts()
+        }
+    }
+    override fun onCleared() {
+        super.onCleared()
+        Timber.i("Cleared")
+    }
+
+    // ADDING AND RETRIEVING FAVORITES TO DB
+
+    fun addFavorite(postId: Int) {
+        Timber.i("adding a favorite")
+        val favorite = UserFavoritePostsCrossRef(user.email, postId)
+        uiScope.launch {
+            favoriteToDb(favorite)
+        }
+    }
+
+    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef){
+        withContext(Dispatchers.IO){
+            database.insertFavorite(favorite)
+        }
+    }
+
+    // ADDING REACTIONS
+
+    fun addReaction(reactionText: String, postId: Int) {
+        Timber.i("reaction text: %s", reactionText)
+        val reaction = Reaction(0, reactionText, user.username, postId)
+        uiScope.launch {
+            insertReactionDb(reaction)
+        }
+        gatherPosts()
+    }
+
+    private suspend fun insertReactionDb(reaction: Reaction){
+        withContext(Dispatchers.IO){
+            database.insertReaction(reaction)
+        }
+    }
+
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
@@ -115,5 +192,4 @@ class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Applic
         }
         return userByMail
     }
-
 }

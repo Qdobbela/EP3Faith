@@ -7,7 +7,7 @@
     <data>
         <variable
             name="favoriteViewModel"
-            type="com.example.ep3faith.favorites.FavoritesViewModel" />
+            type="com.example.ep3faith.ui.favorites.FavoritesViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

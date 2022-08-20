@@ -1,6 +1,5 @@
 package com.example.ep3faith.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao

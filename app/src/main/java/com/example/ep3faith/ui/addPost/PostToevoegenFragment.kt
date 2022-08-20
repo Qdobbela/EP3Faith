@@ -1,6 +1,5 @@
-package com.example.ep3faith.addPost
+package com.example.ep3faith.ui.addPost
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentPostToevoegenBinding
+import timber.log.Timber
 
 class PostToevoegenFragment : Fragment() {
 
@@ -55,6 +55,7 @@ class PostToevoegenFragment : Fragment() {
             binding.imageView2.setImageURI(uri)
             if (uri != null) {
                 imageUri = uri
+                Timber.i("Uri: %s", imageUri.toString())
             }
         }
 

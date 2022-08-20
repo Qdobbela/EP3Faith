@@ -1,6 +1,7 @@
-package com.example.ep3faith.profile
+package com.example.ep3faith.ui.profile
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,7 +33,6 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
 
     init {
         Timber.i("Initialized")
-        _user.value = User(username = "Loading...", email = "", profilePicture = "")
         getCredentials()
     }
 
@@ -48,6 +48,7 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
         }
+        Timber.i("Image check: %s", userByMail.profilePicture)
         return userByMail
     }
 
@@ -71,6 +72,21 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
             _user.value?.let { database.updateUser(it) }
 
             Timber.i("usernameValue: %s", _user.value)
+        }
+    }
+
+    fun updateUser(username: String, imageUri: Uri){
+        _user.value?.username = username
+        _user.value?.profilePicture = imageUri.toString()
+        _user.postValue(user.value)
+        uiScope.launch {
+            user.value?.let { dbUpdateUser(it) }
+        }
+    }
+
+    private suspend fun dbUpdateUser(user: User){
+        withContext(Dispatchers.IO){
+            database.updateUser(user)
         }
     }
 

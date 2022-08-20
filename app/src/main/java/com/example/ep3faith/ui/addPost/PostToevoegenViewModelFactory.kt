@@ -1,10 +1,9 @@
-package com.example.ep3faith.addPost
+package com.example.ep3faith.ui.addPost
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.timeline.TimeLineViewModel
 
 
 class PostToevoegenViewModelFactory(

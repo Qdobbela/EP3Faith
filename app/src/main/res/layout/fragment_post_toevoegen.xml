@@ -6,7 +6,7 @@
     <data>
         <variable
             name="postToevoegenViewModel"
-            type="com.example.ep3faith.addPost.PostToevoegenViewModel" />
+            type="com.example.ep3faith.ui.addPost.PostToevoegenViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,4 +1,4 @@
-package com.example.ep3faith.timeline
+package com.example.ep3faith.ui.timeline
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

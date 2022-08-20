@@ -1,4 +1,4 @@
-package com.example.ep3faith.favorites
+package com.example.ep3faith.ui.favorites
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

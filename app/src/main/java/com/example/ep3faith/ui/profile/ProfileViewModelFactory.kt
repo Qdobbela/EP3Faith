@@ -1,4 +1,4 @@
-package com.example.ep3faith.profile
+package com.example.ep3faith.ui.profile
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

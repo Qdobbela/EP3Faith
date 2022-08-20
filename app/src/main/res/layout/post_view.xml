@@ -9,10 +9,10 @@
             type="com.example.ep3faith.database.PostWithReactions" />
         <variable
             name="clickListener"
-            type="com.example.ep3faith.timeline.PostAdapter.PostFavoriteListener"/>
+            type="com.example.ep3faith.ui.timeline.PostAdapter.PostFavoriteListener"/>
         <variable
             name="reactionClickListener"
-            type="com.example.ep3faith.timeline.PostAdapter.AddReactionListener"/>
+            type="com.example.ep3faith.ui.timeline.PostAdapter.AddReactionListener"/>
 
         <variable
             name="position"
