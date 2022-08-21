@@ -130,6 +130,22 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
+    // DELETE A POST
+
+    fun deletePost(postId: Int) {
+        uiScope.launch {
+            deletePostDb(postId)
+        }
+    }
+
+    private suspend fun deletePostDb(postId: Int){
+        withContext(Dispatchers.IO){
+            val post = database.getPostById(postId)
+            database.deletePost(post)
+            gatherPosts()
+        }
+    }
+
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
@@ -192,6 +208,5 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
             userByMail = database.getUserByEmail(email)
         }
         return userByMail
-        Timber.i("User is: %s", user)
     }
 }

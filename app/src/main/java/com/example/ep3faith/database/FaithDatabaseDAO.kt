@@ -54,4 +54,10 @@ interface FaithDatabaseDAO {
     @Query("SELECT * FROM post_table WHERE postId IN (:favorites)")
     fun getFavoritesWithReactions(favorites: List<Int>): List<PostWithReactions>
 
+    @Delete
+    fun deletePost(post: Post)
+
+    @Query("SELECT * FROM post_table WHERE postId = :postId")
+    fun getPostById(postId: Int): Post
+
 }

@@ -61,16 +61,21 @@ class TimeLineFragment : Fragment() {
     private fun initAdapter(binding: FragmentTimeLineBinding) {
         val adapter =
             viewModel.user.value?.let {
-                PostAdapter(PostAdapter.PostFavoriteListener { postId ->
-                    viewModel.addFavorite(postId)
-                },
+                PostAdapter(
+                    PostAdapter.PostFavoriteListener { postId ->
+                        viewModel.addFavorite(postId)
+                    },
                     PostAdapter.AddReactionListener { postId, pos ->
                         Timber.i("saving Reaction, recyclerpos: %s", pos)
                         val view = binding.postList.getChildAt(pos)
                         Timber.i("view: %s", view.toString())
                         val editText: EditText = view.findViewById(R.id.addReactionEditView)
                         viewModel.addReaction(editText.text.toString(), postId)
-                    }, it
+                    },
+                    PostAdapter.DeletePostClickListener{ postId ->
+                        viewModel.deletePost(postId)
+                    }
+                    ,it
                 )
             }
 

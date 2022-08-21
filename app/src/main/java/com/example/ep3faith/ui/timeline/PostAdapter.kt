@@ -17,11 +17,11 @@ import com.example.ep3faith.database.User
 import com.example.ep3faith.databinding.PostViewBinding
 import timber.log.Timber
 
-class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
+class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val deletePostClickListener: DeletePostClickListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onBindViewHolder(holder: PostViewHolder,position: Int) {
         user.let {
-            holder.bind(clickListener, reactionListener, it, getItem(position)!!, position)
+            holder.bind(clickListener, reactionListener, deletePostClickListener, it, getItem(position)!!, position)
             Timber.i("binding with user: %s", user.email)
         }
     }
@@ -32,11 +32,15 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
 
     class PostViewHolder private constructor(val binding: PostViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, user: User, item: PostWithReactions, position: Int) {
+        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, deletePostClickListener: DeletePostClickListener, user: User, item: PostWithReactions, position: Int) {
             binding.position = position
             binding.postAndReactions = item
+
+            //clickListeners
             binding.clickListener = clickListener
             binding.reactionClickListener = reactionListener
+            binding.deletePostClickListener = deletePostClickListener
+
             val reactionAdapter = ReactionAdapter(item.reactions)
             binding.reactionList.adapter = reactionAdapter
             reactionAdapter.submitList(item.reactions)
@@ -79,6 +83,14 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
     }
 
     class AddReactionListener(val clickListener: (postId: Int, position: Int) -> Unit) {
+        fun onClick(postWithReactions: PostWithReactions, position: Int) = clickListener(postWithReactions.post.postId, position)
+    }
+
+    class DeletePostClickListener(val clickListener: (postId: Int) -> Unit) {
+        fun onClick(postWithReactions: PostWithReactions) = clickListener(postWithReactions.post.postId)
+    }
+
+    class EditPostClickListener(val clickListener: (postId: Int, position: Int) -> Unit) {
         fun onClick(postWithReactions: PostWithReactions, position: Int) = clickListener(postWithReactions.post.postId, position)
     }
 
