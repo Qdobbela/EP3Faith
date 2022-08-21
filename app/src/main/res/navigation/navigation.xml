@@ -53,4 +53,8 @@
             android:name="postId"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/apiFragment"
+        android:name="com.example.ep3faith.ui.api.ApiFragment"
+        android:label="ApiFragment" />
 </navigation>

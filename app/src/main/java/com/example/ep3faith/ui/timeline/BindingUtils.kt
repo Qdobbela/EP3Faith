@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.ep3faith.database.post.PostWithReactions
 import com.example.ep3faith.database.reaction.DatabaseReaction
-import com.example.ep3faith.domain.Reaction
 
 @BindingAdapter("usernameString")
 fun TextView.setUsernameString(item: PostWithReactions?){

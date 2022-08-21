@@ -34,7 +34,7 @@ interface FaithDatabaseDAO {
     fun getPosts(): LiveData<List<DatabasePost>>
 
     @Insert
-    suspend fun insertPost(post: DatabasePost)
+    fun insertPost(post: DatabasePost)
 
     @Query("DELETE FROM post_table")
     fun clearPosts()

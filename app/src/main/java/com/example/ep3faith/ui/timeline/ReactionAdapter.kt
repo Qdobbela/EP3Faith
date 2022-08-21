@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.database.reaction.DatabaseReaction
 import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.databinding.ReactionViewBinding
-import com.example.ep3faith.domain.Reaction
 
 class ReactionAdapter(reactionsPassed: List<DatabaseReaction>, val deleteReactionClickListener: DeleteReactionClickListener, val user: DatabaseUser): ListAdapter<DatabaseReaction, ReactionAdapter.ReactionViewHolder>(ReactionDiffCallback()) {
 
