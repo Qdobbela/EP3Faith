@@ -1,14 +1,9 @@
 package com.example.ep3faith.ui.timeline
 
 import android.annotation.SuppressLint
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet.GONE
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,11 +12,11 @@ import com.example.ep3faith.database.User
 import com.example.ep3faith.databinding.PostViewBinding
 import timber.log.Timber
 
-class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val deletePostClickListener: DeletePostClickListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
+class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val deletePostClickListener: DeletePostClickListener, val editPostClickListener: EditPostClickListener, val deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onBindViewHolder(holder: PostViewHolder,position: Int) {
         user.let {
-            holder.bind(clickListener, reactionListener, deletePostClickListener, it, getItem(position)!!, position)
+            holder.bind(clickListener, reactionListener, deletePostClickListener, editPostClickListener, deleteReactionClickListener, it, getItem(position)!!, position)
             Timber.i("binding with user: %s", user.email)
         }
     }
@@ -32,7 +27,7 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
 
     class PostViewHolder private constructor(val binding: PostViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, deletePostClickListener: DeletePostClickListener, user: User, item: PostWithReactions, position: Int) {
+        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, deletePostClickListener: DeletePostClickListener,editPostClickListener: EditPostClickListener, deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, user: User, item: PostWithReactions, position: Int) {
             binding.position = position
             binding.postAndReactions = item
 
@@ -40,8 +35,9 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
             binding.clickListener = clickListener
             binding.reactionClickListener = reactionListener
             binding.deletePostClickListener = deletePostClickListener
+            binding.editPostClickListener = editPostClickListener
 
-            val reactionAdapter = ReactionAdapter(item.reactions)
+            val reactionAdapter = ReactionAdapter(item.reactions, deleteReactionClickListener, user)
             binding.reactionList.adapter = reactionAdapter
             reactionAdapter.submitList(item.reactions)
 
@@ -90,8 +86,8 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
         fun onClick(postWithReactions: PostWithReactions) = clickListener(postWithReactions.post.postId)
     }
 
-    class EditPostClickListener(val clickListener: (postId: Int, position: Int) -> Unit) {
-        fun onClick(postWithReactions: PostWithReactions, position: Int) = clickListener(postWithReactions.post.postId, position)
+    class EditPostClickListener(val clickListener: (postId: Int) -> Unit) {
+        fun onClick(postWithReactions: PostWithReactions) = clickListener(postWithReactions.post.postId)
     }
 
 

@@ -115,7 +115,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     fun addReaction(reactionText: String, postId: Int) {
         Timber.i("reaction text: %s", reactionText)
-        val reaction = user.value?.let { Reaction(0, reactionText, it.username, postId) }
+        val reaction = user.value?.let { Reaction(0, reactionText, it.username, postId, it.email) }
         uiScope.launch {
             if (reaction != null) {
                 insertReactionDb(reaction)
@@ -142,6 +142,22 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         withContext(Dispatchers.IO){
             val post = database.getPostById(postId)
             database.deletePost(post)
+            gatherPosts()
+        }
+    }
+
+    // DELETE REACTION
+
+    fun deleteReaction(reactionId: Int) {
+        uiScope.launch {
+            deleteReactionByIdDb(reactionId)
+        }
+    }
+
+    private suspend fun deleteReactionByIdDb(reactionId: Int){
+        withContext(Dispatchers.IO){
+            val reaction = database.getReactionById(reactionId)
+            database.deleteReaction(reaction)
             gatherPosts()
         }
     }

@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentFavoritesBinding
 import com.example.ep3faith.ui.timeline.PostAdapter
+import com.example.ep3faith.ui.timeline.ReactionAdapter
+import com.example.ep3faith.ui.timeline.TimeLineFragmentDirections
 
 /**
  * A simple [Fragment] subclass.
@@ -56,9 +59,20 @@ class FavoritesFragment : Fragment() {
             viewModel.user.value?.let {
                 PostAdapter(PostAdapter.PostFavoriteListener { postId ->
                     viewModel.removeFavorite(postId)
-                }, PostAdapter.AddReactionListener { postId, pos ->
+                },
+                PostAdapter.AddReactionListener { postId, pos ->
 
-                }, it)
+                },
+                PostAdapter.DeletePostClickListener{ postId ->
+
+                },
+                PostAdapter.EditPostClickListener{ postId ->
+
+                }, 
+                ReactionAdapter.DeleteReactionClickListener{ reactionId ->  
+
+                },
+                it)
             }
 
         binding.favoriteList.adapter = adapter

@@ -10,10 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
-import kotlinx.coroutines.delay
 import timber.log.Timber
 
 /**
@@ -74,6 +74,12 @@ class TimeLineFragment : Fragment() {
                     },
                     PostAdapter.DeletePostClickListener{ postId ->
                         viewModel.deletePost(postId)
+                    },
+                    PostAdapter.EditPostClickListener{ postId ->
+                        view?.findNavController()?.navigate(TimeLineFragmentDirections.actionTimeLineFragmentToEditPostFragment(postId))
+                    },
+                    ReactionAdapter.DeleteReactionClickListener{ reactionId ->
+                        viewModel.deleteReaction(reactionId)
                     }
                     ,it
                 )

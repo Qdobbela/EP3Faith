@@ -69,7 +69,9 @@ data class Reaction(
 
     var reactionUser: String,
 
-    var hostPostId: Int
+    var hostPostId: Int,
+
+    var reactionUserEmail: String
 )
 
 data class ReactionAndUser(

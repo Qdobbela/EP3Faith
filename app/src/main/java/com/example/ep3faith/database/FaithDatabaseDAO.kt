@@ -60,4 +60,13 @@ interface FaithDatabaseDAO {
     @Query("SELECT * FROM post_table WHERE postId = :postId")
     fun getPostById(postId: Int): Post
 
+    @Update
+    fun updatePost(post: Post)
+
+    @Query("SELECT * FROM reaction_table WHERE reactionId = :reactionId")
+    fun getReactionById(reactionId: Int): Reaction
+
+    @Delete
+    fun deleteReaction(reaction: Reaction)
+
 }

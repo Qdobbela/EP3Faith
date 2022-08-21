@@ -17,6 +17,9 @@
             name="deletePostClickListener"
             type="com.example.ep3faith.ui.timeline.PostAdapter.DeletePostClickListener"/>
         <variable
+            name="editPostClickListener"
+            type="com.example.ep3faith.ui.timeline.PostAdapter.EditPostClickListener"/>
+        <variable
             name="position"
             type="Integer"/>
     </data>
@@ -132,6 +135,7 @@
             android:layout_marginStart="8dp"
             android:text="@string/aanpassen"
             android:visibility="gone"
+            android:onClick="@{() -> editPostClickListener.onClick(postAndReactions)}"
             app:layout_constraintStart_toEndOf="@+id/postImageView"
             app:layout_constraintTop_toTopOf="@+id/postImageView"
             tools:visibility="visible" />
