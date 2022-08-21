@@ -1,6 +1,7 @@
 package com.example.ep3faith.ui.timeline
 
 import androidx.room.Room
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.database.FaithDatabaseDAO
@@ -9,7 +10,10 @@ import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(AndroidJUnit4::class)
 class TimeLineViewModelTest {
 
     private lateinit var faithDAO: FaithDatabaseDAO
