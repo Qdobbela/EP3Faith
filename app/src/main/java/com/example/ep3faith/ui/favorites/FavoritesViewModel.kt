@@ -14,6 +14,10 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.database.*
+import com.example.ep3faith.database.post.DatabasePost
+import com.example.ep3faith.database.post.PostWithReactions
+import com.example.ep3faith.database.user.DatabaseUser
+import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -22,8 +26,8 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private var _user = MutableLiveData<User>()
-    val user: LiveData<User>
+    private var _user = MutableLiveData<DatabaseUser>()
+    val user: LiveData<DatabaseUser>
         get() = _user
 
     private var _favorites = MutableLiveData<List<PostWithReactions>>()
@@ -41,7 +45,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
     }
 
     private suspend fun gatherFavoritesFromDb() {
-        val posts: List<Post>
+        val posts: List<DatabasePost>
         val postIdList: MutableList<Int> = mutableListOf()
         var postReactionList: List<PostWithReactions>
         withContext(Dispatchers.IO){
@@ -61,7 +65,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     fun removeFavorite(postId: Int) {
         uiScope.launch {
-            val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email,postId) }
+            val favorite = user.value?.let{ UserFavoritePostsCrossRef(it.email,postId) }
             if (favorite != null) {
                 removeFavoriteDb(favorite)
             }
@@ -130,8 +134,8 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         }
     }
 
-    private suspend fun getUserFromDB(email: String): User {
-        val userByMail: User
+    private suspend fun getUserFromDB(email: String): DatabaseUser {
+        val userByMail: DatabaseUser
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
         }

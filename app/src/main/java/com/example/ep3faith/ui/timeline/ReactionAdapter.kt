@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ep3faith.database.PostWithReactions
-import com.example.ep3faith.database.Reaction
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.reaction.DatabaseReaction
+import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.databinding.ReactionViewBinding
+import com.example.ep3faith.domain.Reaction
 
-class ReactionAdapter(reactionsPassed: List<Reaction>, val deleteReactionClickListener: DeleteReactionClickListener, val user: User): ListAdapter<Reaction, ReactionAdapter.ReactionViewHolder>(ReactionDiffCallback()) {
+class ReactionAdapter(reactionsPassed: List<DatabaseReaction>, val deleteReactionClickListener: DeleteReactionClickListener, val user: DatabaseUser): ListAdapter<DatabaseReaction, ReactionAdapter.ReactionViewHolder>(ReactionDiffCallback()) {
 
-    private var reactions: MutableList<Reaction> = reactionsPassed.toMutableList()
+    private var reactions: MutableList<DatabaseReaction> = reactionsPassed.toMutableList()
 
     override fun onBindViewHolder(holder: ReactionViewHolder,position: Int) {
         holder.bind(reactions[position], deleteReactionClickListener, user)
@@ -26,7 +26,7 @@ class ReactionAdapter(reactionsPassed: List<Reaction>, val deleteReactionClickLi
 
     class ReactionViewHolder private constructor(val binding: ReactionViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: Reaction, deleteReactionClickListener: DeleteReactionClickListener, user: User) {
+        fun bind(item: DatabaseReaction, deleteReactionClickListener: DeleteReactionClickListener, user: DatabaseUser) {
             binding.reaction = item
             binding.executePendingBindings()
             binding.deleteReactionClickListener = deleteReactionClickListener
@@ -47,20 +47,20 @@ class ReactionAdapter(reactionsPassed: List<Reaction>, val deleteReactionClickLi
         }
     }
 
-    class ReactionDiffCallback :DiffUtil.ItemCallback<Reaction>() {
-        override fun areItemsTheSame(oldItem: Reaction, newItem: Reaction): Boolean {
+    class ReactionDiffCallback :DiffUtil.ItemCallback<DatabaseReaction>() {
+        override fun areItemsTheSame(oldItem: DatabaseReaction, newItem: DatabaseReaction): Boolean {
             return oldItem.reactionId == newItem.reactionId
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Reaction, newItem: Reaction): Boolean {
+        override fun areContentsTheSame(oldItem: DatabaseReaction, newItem: DatabaseReaction): Boolean {
             return oldItem == newItem
         }
 
     }
 
     class DeleteReactionClickListener(val clickListener: (reactionId: Int) -> Unit) {
-        fun onClick(reaction: Reaction) = clickListener(reaction.reactionId)
+        fun onClick(reaction: DatabaseReaction) = clickListener(reaction.reactionId)
     }
 
 

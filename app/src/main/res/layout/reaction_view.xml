@@ -6,7 +6,7 @@
     <data>
         <variable
             name="reaction"
-            type="com.example.ep3faith.database.Reaction" />
+            type="com.example.ep3faith.database.reaction.DatabaseReaction" />
         <variable
             name="deleteReactionClickListener"
             type="com.example.ep3faith.ui.timeline.ReactionAdapter.DeleteReactionClickListener"/>

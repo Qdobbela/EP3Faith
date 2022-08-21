@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
-import com.example.ep3faith.database.Post
+import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.databinding.FragmentPostToevoegenBinding
 
 class EditPostFragment : Fragment() {
@@ -42,7 +42,7 @@ class EditPostFragment : Fragment() {
 
         //ARGS
 
-        var args = EditPostFragmentArgs.fromBundle(requireArguments())
+        val args = EditPostFragmentArgs.fromBundle(requireArguments())
         viewModel.getPost(args.postId)
 
         viewModel.post.observe(viewLifecycleOwner, Observer {
@@ -73,7 +73,7 @@ class EditPostFragment : Fragment() {
         return binding.root
     }
 
-    private fun initEdit(binding: FragmentPostToevoegenBinding, post: LiveData<Post>) {
+    private fun initEdit(binding: FragmentPostToevoegenBinding, post: LiveData<DatabasePost>) {
         binding.linkEditView.setText(post.value?.link)
         binding.imageView2.setImageURI(Uri.parse(post.value?.picture))
         binding.editCaptionEditView.setText(post.value?.caption)

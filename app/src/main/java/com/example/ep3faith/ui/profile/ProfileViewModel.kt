@@ -15,7 +15,7 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.user.DatabaseUser
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -27,8 +27,8 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private var _user = MutableLiveData<User>()
-    val user: LiveData<User>
+    private var _user = MutableLiveData<DatabaseUser>()
+    val user: LiveData<DatabaseUser>
             get() = _user
 
     init {
@@ -43,8 +43,8 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         }
     }
 
-    private suspend fun getUserFromDB(email: String): User{
-        val userByMail: User
+    private suspend fun getUserFromDB(email: String): DatabaseUser{
+        val userByMail: DatabaseUser
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
         }
@@ -57,24 +57,6 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         Timber.i("Cleared")
     }
 
-    fun changeUsername(newName: String){
-        uiScope.launch {
-            dbUpdateUsername(newName)
-        }
-    }
-
-    private suspend fun dbUpdateUsername(newName: String) {
-        withContext(Dispatchers.IO){
-            Timber.i("change username to: %s", newName)
-            _user.value?.username = newName
-            _user.postValue(_user.value)
-
-            _user.value?.let { database.updateUser(it) }
-
-            Timber.i("usernameValue: %s", _user.value)
-        }
-    }
-
     fun updateUser(username: String, imageUri: Uri){
         _user.value?.username = username
         _user.value?.profilePicture = imageUri.toString()
@@ -84,7 +66,7 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         }
     }
 
-    private suspend fun dbUpdateUser(user: User){
+    private suspend fun dbUpdateUser(user: DatabaseUser){
         withContext(Dispatchers.IO){
             database.updateUser(user)
         }

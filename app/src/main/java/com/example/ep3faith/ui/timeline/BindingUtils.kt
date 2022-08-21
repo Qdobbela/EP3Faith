@@ -6,8 +6,9 @@ import android.text.style.URLSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.ep3faith.database.PostWithReactions
-import com.example.ep3faith.database.Reaction
+import com.example.ep3faith.database.post.PostWithReactions
+import com.example.ep3faith.database.reaction.DatabaseReaction
+import com.example.ep3faith.domain.Reaction
 
 @BindingAdapter("usernameString")
 fun TextView.setUsernameString(item: PostWithReactions?){
@@ -40,13 +41,13 @@ fun ImageView.setImageUri(item: PostWithReactions?){
 }
 
 @BindingAdapter("reactionUser")
-fun TextView.setReactionUsernameString(item: Reaction?){
+fun TextView.setReactionUsernameString(item: DatabaseReaction?){
     item?.let {
         text = item.reactionUser
     }
 }
 @BindingAdapter("reaction")
-fun TextView.setReactionString(item: Reaction?){
+fun TextView.setReactionString(item: DatabaseReaction?){
     item?.let {
         text = item.reactionText
     }

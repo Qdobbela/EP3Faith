@@ -6,7 +6,7 @@
     <data>
         <variable
             name="postAndReactions"
-            type="com.example.ep3faith.database.PostWithReactions" />
+            type="com.example.ep3faith.database.post.PostWithReactions" />
         <variable
             name="clickListener"
             type="com.example.ep3faith.ui.timeline.PostAdapter.PostFavoriteListener"/>

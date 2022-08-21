@@ -15,8 +15,8 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.database.FaithDatabaseDAO
-import com.example.ep3faith.database.Post
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.post.DatabasePost
+import com.example.ep3faith.database.user.DatabaseUser
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -24,7 +24,7 @@ import timber.log.Timber
 class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private lateinit var user : User
+    private lateinit var user : DatabaseUser
 
     private var _saved = MutableLiveData<Boolean>()
     val saved: LiveData<Boolean>
@@ -37,13 +37,13 @@ class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Applic
     //SAVING A POST TO THE DB
 
     fun postOpslaan(caption: String, link: String, imageUri: Uri) {
-        val post = Post( 0, user.username, user.email , caption, imageUri.toString(),link)
+        val post = DatabasePost( 0, user.username, user.email , caption, imageUri.toString(),link)
         uiScope.launch {
             _saved.value = dbPostOpslaan(post)
         }
     }
 
-    private suspend fun dbPostOpslaan(post: Post): Boolean{
+    private suspend fun dbPostOpslaan(post: DatabasePost): Boolean{
         withContext(Dispatchers.IO) {
             database.insertPost(post)
         }
@@ -105,8 +105,8 @@ class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Applic
         }
     }
 
-    private suspend fun getUserFromDB(email: String): User {
-        val userByMail: User
+    private suspend fun getUserFromDB(email: String): DatabaseUser {
+        val userByMail: DatabaseUser
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
         }

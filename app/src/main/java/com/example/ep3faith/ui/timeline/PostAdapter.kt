@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ep3faith.database.PostWithReactions
-import com.example.ep3faith.database.User
+import com.example.ep3faith.database.post.PostWithReactions
+import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.databinding.PostViewBinding
 import timber.log.Timber
 
-class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val deletePostClickListener: DeletePostClickListener, val editPostClickListener: EditPostClickListener, val deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
+class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val deletePostClickListener: DeletePostClickListener, val editPostClickListener: EditPostClickListener, val deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, val user: DatabaseUser): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onBindViewHolder(holder: PostViewHolder,position: Int) {
         user.let {
@@ -27,7 +27,7 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
 
     class PostViewHolder private constructor(val binding: PostViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, deletePostClickListener: DeletePostClickListener,editPostClickListener: EditPostClickListener, deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, user: User, item: PostWithReactions, position: Int) {
+        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, deletePostClickListener: DeletePostClickListener, editPostClickListener: EditPostClickListener, deleteReactionClickListener: ReactionAdapter.DeleteReactionClickListener, user: DatabaseUser, item: PostWithReactions, position: Int) {
             binding.position = position
             binding.postAndReactions = item
 

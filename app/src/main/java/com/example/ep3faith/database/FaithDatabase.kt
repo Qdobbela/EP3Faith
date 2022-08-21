@@ -4,8 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.ep3faith.database.post.DatabasePost
+import com.example.ep3faith.database.reaction.DatabaseReaction
+import com.example.ep3faith.database.user.DatabaseUser
+import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 
-@Database(entities = [User::class, Post::class, UserFavoritePostsCrossRef::class, Reaction::class], version = 11, exportSchema = false)
+@Database(entities = [DatabaseUser::class, DatabasePost::class, UserFavoritePostsCrossRef::class, DatabaseReaction::class], version = 13, exportSchema = false)
 abstract class FaithDatabase: RoomDatabase() {
     abstract val faithDatabaseDAO: FaithDatabaseDAO
 
@@ -30,3 +34,4 @@ abstract class FaithDatabase: RoomDatabase() {
 
     }
 }
+//

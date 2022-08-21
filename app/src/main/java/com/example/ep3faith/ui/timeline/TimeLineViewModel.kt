@@ -14,6 +14,10 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.database.*
+import com.example.ep3faith.database.post.PostWithReactions
+import com.example.ep3faith.database.reaction.DatabaseReaction
+import com.example.ep3faith.database.user.DatabaseUser
+import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -21,7 +25,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val users: List<User> = listOf(User("quinten.dobbelaere@gmail.com", "Nicerdicer", "content://com.android.providers.media.documents/document/image%3A107958"),User("quinten.dobbelaere@student.hogent.be", "tryhard", "content://com.android.providers.media.documents/document/image%3A107958"))
+    private val users: List<DatabaseUser> = listOf(DatabaseUser("quinten.dobbelaere@gmail.com", "Nicerdicer", "content://com.android.providers.media.documents/document/image%3A107958"),DatabaseUser("quinten.dobbelaere@student.hogent.be", "tryhard", "content://com.android.providers.media.documents/document/image%3A107958"))
     /*private val initPosts: List<Post> = listOf(
         Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
@@ -29,8 +33,8 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
     )*/
-    private var _user = MutableLiveData<User>()
-    val user: LiveData<User>
+    private var _user = MutableLiveData<DatabaseUser>()
+    val user: LiveData<DatabaseUser>
         get() = _user
 
     private var _posts = MutableLiveData<List<PostWithReactions>>()
@@ -42,7 +46,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     init {
         Timber.i("Initialized")
         getCredentials()
-        //initDB()
+        initDB()
         gatherPosts()
     }
 
@@ -68,7 +72,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     private suspend fun dbClear() {
         withContext(Dispatchers.IO) {
             database.clearUsers()
-            database.clearPosts()
+            //database.clearPosts()
         }
     }
     override fun onCleared() {
@@ -85,8 +89,8 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun getPosts(): List<PostWithReactions>{
-        var posts: List<PostWithReactions>
+    private suspend fun getPosts(): List<PostWithReactions>?{
+        var posts: List<PostWithReactions>?
         withContext(Dispatchers.IO){
             posts = database.getPostWithReactions()
         }
@@ -115,7 +119,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     fun addReaction(reactionText: String, postId: Int) {
         Timber.i("reaction text: %s", reactionText)
-        val reaction = user.value?.let { Reaction(0, reactionText, it.username, postId, it.email) }
+        val reaction = user.value?.let { DatabaseReaction(0, reactionText, it.username, postId, it.email) }
         uiScope.launch {
             if (reaction != null) {
                 insertReactionDb(reaction)
@@ -124,7 +128,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         gatherPosts()
     }
 
-    private suspend fun insertReactionDb(reaction: Reaction){
+    private suspend fun insertReactionDb(reaction: DatabaseReaction){
         withContext(Dispatchers.IO){
             database.insertReaction(reaction)
         }
@@ -218,8 +222,8 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun getUserFromDB(email: String): User {
-        val userByMail: User
+    private suspend fun getUserFromDB(email: String): DatabaseUser {
+        val userByMail: DatabaseUser
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
         }

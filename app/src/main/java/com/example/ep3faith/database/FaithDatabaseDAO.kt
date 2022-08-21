@@ -1,72 +1,86 @@
 package com.example.ep3faith.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.ep3faith.database.post.DatabasePost
+import com.example.ep3faith.database.post.PostWithReactions
+import com.example.ep3faith.database.reaction.DatabaseReaction
+import com.example.ep3faith.database.user.DatabaseUser
+import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
+import com.example.ep3faith.database.user.UserWithPosts
 
 @Dao
 interface FaithDatabaseDAO {
 
+    //USER
+
     @Query("SELECT * FROM user_table WHERE email = :email")
-    public fun getUserByEmail(email: String): User
+    fun getUserByEmail(email: String): DatabaseUser
 
     @Insert
-    public fun insertUsers(users: List<User>)
+    fun insertUsers(users: List<DatabaseUser>)
 
     @Query("DELETE FROM user_table")
-    public fun clearUsers()
-
-    @Query("DELETE FROM post_table")
-    public fun clearPosts()
+    fun clearUsers()
 
     @Update
-    public fun updateUser(user: User)
+    fun updateUser(user: DatabaseUser)
 
-    @Insert
-    public fun insertPosts(posts: List<Post>)
+    //POST
 
     @Query("SELECT * FROM post_table")
-    public fun getPosts(): List<Post>
-
-    @Query("SELECT * FROM post_table WHERE emailUser = :email")
-    public fun getOwnPosts(email: String): List<Post>
+    fun getPosts(): LiveData<List<DatabasePost>>
 
     @Insert
-    public fun insertPost(post: Post)
+    suspend fun insertPost(post: DatabasePost)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public fun insertFavorite(favorite: UserFavoritePostsCrossRef)
+    @Query("DELETE FROM post_table")
+    fun clearPosts()
 
-    @Transaction
-    @Query("SELECT * FROM user_table WHERE email = :email")
-    public fun getUserWithFavorites(email: String): UserWithPosts
+    @Query("SELECT * FROM post_table WHERE postId = :postId")
+    fun getPostById(postId: Int): DatabasePost
+
+    @Update
+    fun updatePost(post: DatabasePost)
 
     @Delete
-    fun deleteFavorite(favorite: UserFavoritePostsCrossRef)
+    fun deletePost(post: DatabasePost)
 
-    @Insert
-    public fun insertReaction(reaction: Reaction)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPosts(posts: List<DatabasePost>)
+
+    @Query("SELECT * FROM post_table WHERE emailUser = :email")
+    fun getOwnPosts(email: String): List<DatabasePost>
 
     @Transaction
     @Query("SELECT * FROM post_table")
     fun getPostWithReactions(): List<PostWithReactions>
 
-
     @Transaction
     @Query("SELECT * FROM post_table WHERE postId IN (:favorites)")
     fun getFavoritesWithReactions(favorites: List<Int>): List<PostWithReactions>
 
+    //FAVORITE
+
+    @Transaction
+    @Query("SELECT * FROM user_table WHERE email = :email")
+    fun getUserWithFavorites(email: String): UserWithPosts
+
     @Delete
-    fun deletePost(post: Post)
+    fun deleteFavorite(favorite: UserFavoritePostsCrossRef)
 
-    @Query("SELECT * FROM post_table WHERE postId = :postId")
-    fun getPostById(postId: Int): Post
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertFavorite(favorite: UserFavoritePostsCrossRef)
 
-    @Update
-    fun updatePost(post: Post)
+    //REACTION
+
+    @Insert
+    fun insertReaction(reaction: DatabaseReaction)
 
     @Query("SELECT * FROM reaction_table WHERE reactionId = :reactionId")
-    fun getReactionById(reactionId: Int): Reaction
+    fun getReactionById(reactionId: Int): DatabaseReaction
 
     @Delete
-    fun deleteReaction(reaction: Reaction)
+    fun deleteReaction(reaction: DatabaseReaction)
 
 }
