@@ -8,6 +8,8 @@ import com.example.ep3faith.database.reaction.DatabaseReaction
 import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import com.example.ep3faith.database.user.UserWithPosts
+import com.example.ep3faith.domain.Reaction
+import com.example.ep3faith.domain.User
 
 @Dao
 interface FaithDatabaseDAO {
@@ -82,5 +84,11 @@ interface FaithDatabaseDAO {
 
     @Delete
     fun deleteReaction(reaction: DatabaseReaction)
+
+    @Query("SELECT * FROM reaction_table")
+    fun getReactions(): LiveData<List<DatabaseReaction>>
+
+    @Query("SELECT * FROM user_table")
+    fun getUsers(): LiveData<List<DatabaseUser>>
 
 }
