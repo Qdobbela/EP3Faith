@@ -13,7 +13,6 @@
         <variable
             name="reactionClickListener"
             type="com.example.ep3faith.ui.timeline.PostAdapter.AddReactionListener"/>
-
         <variable
             name="position"
             type="Integer"/>
@@ -48,7 +47,7 @@
             android:padding="@dimen/padding_small"
             app:imageUri="@{postAndReactions}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.153"
+            app:layout_constraintHorizontal_bias="0.053"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,5 +121,29 @@
             android:onClick="@{() -> reactionClickListener.onClick(postAndReactions, position)}"
             app:layout_constraintBottom_toBottomOf="@+id/addReactionEditView"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/postAanpassenButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/aanpassen"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/postImageView"
+            app:layout_constraintTop_toTopOf="@+id/postImageView"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/deletePostButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/verwijder"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintStart_toEndOf="@+id/postImageView"
+            app:layout_constraintTop_toBottomOf="@+id/postAanpassenButton"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

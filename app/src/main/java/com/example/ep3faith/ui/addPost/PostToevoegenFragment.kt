@@ -19,7 +19,6 @@ import timber.log.Timber
 class PostToevoegenFragment : Fragment() {
 
     private lateinit var viewModel: PostToevoegenViewModel
-    private lateinit var binding: FragmentPostToevoegenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

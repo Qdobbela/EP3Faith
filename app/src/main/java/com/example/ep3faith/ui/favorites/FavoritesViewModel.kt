@@ -21,7 +21,10 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private lateinit var user: User
+
+    private var _user = MutableLiveData<User>()
+    val user: LiveData<User>
+        get() = _user
 
     private var _favorites = MutableLiveData<List<PostWithReactions>>()
     val favorites: LiveData<List<PostWithReactions>>
@@ -39,10 +42,10 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     private suspend fun gatherFavoritesFromDb() {
         val posts: List<Post>
-        var postIdList: MutableList<Int> = mutableListOf<Int>()
-        var postReactionList: List<PostWithReactions> = listOf<PostWithReactions>()
+        val postIdList: MutableList<Int> = mutableListOf()
+        var postReactionList: List<PostWithReactions>
         withContext(Dispatchers.IO){
-            posts = database.getUserWithFavorites(user.email).post
+            posts = user.value?.let { database.getUserWithFavorites(it.email).post }!!
             for(post in posts){
                 postIdList.add(post.postId)
             }
@@ -58,8 +61,10 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     fun removeFavorite(postId: Int) {
         uiScope.launch {
-            val favorite = UserFavoritePostsCrossRef(user.email,postId)
-            removeFavoriteDb(favorite)
+            val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email,postId) }
+            if (favorite != null) {
+                removeFavoriteDb(favorite)
+            }
         }
     }
 
@@ -120,7 +125,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
     private fun getUser(email: String){
         uiScope.launch {
             val theUser = getUserFromDB(email)
-            user = theUser
+            _user.postValue(theUser)
             gatherFavorites()
         }
     }

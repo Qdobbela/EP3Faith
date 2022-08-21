@@ -29,12 +29,9 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
     )*/
-    lateinit var user: User
-
-    //VARIABLE TO SEE IF POSTS HAS BEEN SAVED
-    private var _saved = MutableLiveData<Boolean>()
-    val saved: LiveData<Boolean>
-        get() = _saved
+    private var _user = MutableLiveData<User>()
+    val user: LiveData<User>
+        get() = _user
 
     private var _posts = MutableLiveData<List<PostWithReactions>>()
     val posts: LiveData<List<PostWithReactions>>
@@ -44,8 +41,9 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     init {
         Timber.i("Initialized")
-        initDB()
         getCredentials()
+        //initDB()
+        gatherPosts()
     }
 
 
@@ -55,7 +53,6 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         uiScope.launch {
             dbClear()
             dBinit()
-            gatherPosts()
         }
     }
 
@@ -64,6 +61,19 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
            database.insertUsers(users)
             //database.insertPosts(initPosts)
         }
+    }
+
+    //CLEAR THE DB
+
+    private suspend fun dbClear() {
+        withContext(Dispatchers.IO) {
+            database.clearUsers()
+            database.clearPosts()
+        }
+    }
+    override fun onCleared() {
+        super.onCleared()
+        Timber.i("Cleared")
     }
 
     //GET THE POSTS FROM THE DB
@@ -83,26 +93,15 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         return posts
     }
 
-    //CLEAR THE DB
-
-    private suspend fun dbClear() {
-        withContext(Dispatchers.IO) {
-            database.clearUsers()
-            //database.clearPosts()
-        }
-    }
-    override fun onCleared() {
-        super.onCleared()
-        Timber.i("Cleared")
-    }
-
     // ADDING AND RETRIEVING FAVORITES TO DB
 
     fun addFavorite(postId: Int) {
         Timber.i("adding a favorite")
-        val favorite = UserFavoritePostsCrossRef(user.email, postId)
+        val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email, postId) }
         uiScope.launch {
-            favoriteToDb(favorite)
+            if (favorite != null) {
+                favoriteToDb(favorite)
+            }
         }
     }
 
@@ -116,9 +115,11 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
 
     fun addReaction(reactionText: String, postId: Int) {
         Timber.i("reaction text: %s", reactionText)
-        val reaction = Reaction(0, reactionText, user.username, postId)
+        val reaction = user.value?.let { Reaction(0, reactionText, it.username, postId) }
         uiScope.launch {
-            insertReactionDb(reaction)
+            if (reaction != null) {
+                insertReactionDb(reaction)
+            }
         }
         gatherPosts()
     }
@@ -181,7 +182,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     private fun getUser(email: String){
         uiScope.launch {
             val theUser = getUserFromDB(email)
-            user = theUser
+            _user.postValue(theUser)
         }
     }
 
@@ -191,5 +192,6 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
             userByMail = database.getUserByEmail(email)
         }
         return userByMail
+        Timber.i("User is: %s", user)
     }
 }

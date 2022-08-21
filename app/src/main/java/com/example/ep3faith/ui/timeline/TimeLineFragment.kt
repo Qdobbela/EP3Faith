@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import com.example.ep3faith.R
 import com.example.ep3faith.database.FaithDatabase
 import com.example.ep3faith.databinding.FragmentTimeLineBinding
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 /**
@@ -42,36 +43,46 @@ class TimeLineFragment : Fragment() {
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = TimeLineViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory)[TimeLineViewModel::class.java]
-
         binding.timelineViewModel = viewModel
         binding.lifecycleOwner = this
 
-        val adapter = PostAdapter(PostAdapter.PostFavoriteListener { postId ->
-            viewModel.addFavorite(postId)
-        },
-        PostAdapter.AddReactionListener { postId, pos ->
-            Timber.i("saving Reaction, recyclerpos: %s", pos)
-            val view = binding.postList.getChildAt(pos)
-            Timber.i("view: %s", view.toString())
-            val editText: EditText = view.findViewById(R.id.addReactionEditView)
-            viewModel.addReaction(editText.text.toString(), postId)
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            viewModel.user.value?.let { it1 -> Timber.i("Got the user: %s", it1.email) }
+            initAdapter(binding)
         })
-
-        binding.postList.adapter = adapter
-
-        viewModel.posts.observe(viewLifecycleOwner, Observer{
-            it?.let{
-                adapter.submitList(it)
-            }
-        })
-
-
 
         binding.nieuwePostButton.setOnClickListener (
             Navigation.createNavigateOnClickListener(R.id.action_timeLineFragment_to_postToevoegenFragment)
             )
 
         return binding.root
+    }
+
+    private fun initAdapter(binding: FragmentTimeLineBinding) {
+        val adapter =
+            viewModel.user.value?.let {
+                PostAdapter(PostAdapter.PostFavoriteListener { postId ->
+                    viewModel.addFavorite(postId)
+                },
+                    PostAdapter.AddReactionListener { postId, pos ->
+                        Timber.i("saving Reaction, recyclerpos: %s", pos)
+                        val view = binding.postList.getChildAt(pos)
+                        Timber.i("view: %s", view.toString())
+                        val editText: EditText = view.findViewById(R.id.addReactionEditView)
+                        viewModel.addReaction(editText.text.toString(), postId)
+                    }, it
+                )
+            }
+
+        binding.postList.adapter = adapter
+
+        viewModel.posts.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if (adapter != null) {
+                    adapter.submitList(it)
+                }
+            }
+        })
     }
 
     companion object {
@@ -82,4 +93,6 @@ class TimeLineFragment : Fragment() {
                 }
             }
     }
+
+
 }

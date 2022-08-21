@@ -26,6 +26,9 @@ interface FaithDatabaseDAO {
     @Query("SELECT * FROM post_table")
     public fun getPosts(): List<Post>
 
+    @Query("SELECT * FROM post_table WHERE emailUser = :email")
+    public fun getOwnPosts(email: String): List<Post>
+
     @Insert
     public fun insertPost(post: Post)
 

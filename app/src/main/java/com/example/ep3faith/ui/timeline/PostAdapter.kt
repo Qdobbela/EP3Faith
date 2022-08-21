@@ -1,20 +1,29 @@
 package com.example.ep3faith.ui.timeline
 
 import android.annotation.SuppressLint
+import android.opengl.Visibility
 import android.view.LayoutInflater
+import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet.GONE
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ep3faith.database.PostWithReactions
+import com.example.ep3faith.database.User
 import com.example.ep3faith.databinding.PostViewBinding
+import timber.log.Timber
 
-class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
-
-    private lateinit var reactionText: String
+class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener: AddReactionListener, val user: User): ListAdapter<PostWithReactions, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onBindViewHolder(holder: PostViewHolder,position: Int) {
-        holder.bind(clickListener, reactionListener, getItem(position)!!, position)
+        user.let {
+            holder.bind(clickListener, reactionListener, it, getItem(position)!!, position)
+            Timber.i("binding with user: %s", user.email)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -23,7 +32,7 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
 
     class PostViewHolder private constructor(val binding: PostViewBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, item: PostWithReactions, position: Int) {
+        fun bind(clickListener: PostFavoriteListener, reactionListener: AddReactionListener, user: User, item: PostWithReactions, position: Int) {
             binding.position = position
             binding.postAndReactions = item
             binding.clickListener = clickListener
@@ -31,6 +40,16 @@ class PostAdapter(val clickListener: PostFavoriteListener, val reactionListener:
             val reactionAdapter = ReactionAdapter(item.reactions)
             binding.reactionList.adapter = reactionAdapter
             reactionAdapter.submitList(item.reactions)
+
+            Timber.i("emails: %s %s", item.post.emailUser, user.email)
+            if(item.post.emailUser == user.email){
+                binding.deletePostButton.visibility = View.VISIBLE
+                binding.postAanpassenButton.visibility = View.VISIBLE
+            } else{
+                binding.deletePostButton.visibility = View.GONE
+                binding.postAanpassenButton.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 

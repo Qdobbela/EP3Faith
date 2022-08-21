@@ -34,5 +34,7 @@
     <string name="new_post">Nieuwe Post</string>
     <string name="link_label">Link</string>
     <string name="afbeelding_kiezen">Kies Afbeelding</string>
+    <string name="aanpassen">Aanpassen</string>
+    <string name="verwijder">Verwijder</string>
 
 </resources>

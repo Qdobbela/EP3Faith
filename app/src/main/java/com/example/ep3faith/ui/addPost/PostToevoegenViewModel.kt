@@ -37,7 +37,7 @@ class PostToevoegenViewModel(val database: FaithDatabaseDAO, application: Applic
     //SAVING A POST TO THE DB
 
     fun postOpslaan(caption: String, link: String, imageUri: Uri) {
-        val post = Post( 0, user.username, caption, imageUri.toString(), link)
+        val post = Post( 0, user.username, user.email , caption, imageUri.toString(),link)
         uiScope.launch {
             _saved.value = dbPostOpslaan(post)
         }

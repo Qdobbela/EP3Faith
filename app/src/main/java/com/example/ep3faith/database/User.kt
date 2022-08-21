@@ -22,6 +22,8 @@ class Post (
 
     var username: String,
 
+    var emailUser: String,
+
     var caption: String,
 
     var picture: String,
@@ -43,6 +45,15 @@ data class UserWithPosts(
         parentColumn = "email",
         entityColumn = "postId",
         associateBy = Junction(UserFavoritePostsCrossRef::class)
+    )
+    val post: List<Post>
+)
+
+data class UserWithOwnPosts(
+    @Embedded val user: User,
+    @Relation(
+        parentColumn = "email",
+        entityColumn = "emailUser"
     )
     val post: List<Post>
 )

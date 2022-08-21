@@ -43,22 +43,33 @@ class FavoritesFragment : Fragment() {
         binding.favoriteViewModel = viewModel
         binding.lifecycleOwner = this
 
-        val adapter = PostAdapter(PostAdapter.PostFavoriteListener { postId ->
-            viewModel.removeFavorite(postId)
-        }, PostAdapter.AddReactionListener { postId, pos ->
-
-        })
-
-        binding.favoriteList.adapter = adapter
-
-        viewModel.favorites.observe(viewLifecycleOwner, Observer{
-            it?.let{
-                adapter.submitList(it)
-            }
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            initAdapter(binding)
         })
 
         return binding.root
 
+    }
+
+    private fun initAdapter(binding: FragmentFavoritesBinding) {
+        val adapter =
+            viewModel.user.value?.let {
+                PostAdapter(PostAdapter.PostFavoriteListener { postId ->
+                    viewModel.removeFavorite(postId)
+                }, PostAdapter.AddReactionListener { postId, pos ->
+
+                }, it)
+            }
+
+        binding.favoriteList.adapter = adapter
+
+        viewModel.favorites.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if (adapter != null) {
+                    adapter.submitList(it)
+                }
+            }
+        })
     }
 
     companion object {
