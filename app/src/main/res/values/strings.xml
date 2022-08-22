@@ -38,5 +38,7 @@
     <string name="verwijder">Verwijder</string>
     <string name="nog_een">Nog een</string>
     <string name="Dadjoke">Dad Joke</string>
+    <string name="Inbox">Inbox</string>
+    <string name="only_for_counselor">Dit is enkel voor begeleiders!</string>
 
 </resources>

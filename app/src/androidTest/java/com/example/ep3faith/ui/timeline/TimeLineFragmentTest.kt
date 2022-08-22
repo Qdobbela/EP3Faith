@@ -27,7 +27,7 @@ class TimeLineFragmentTest {
 
     @Test
     fun testNewsFragment() {
-        
+
     }
 
 

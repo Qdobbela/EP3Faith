@@ -2,7 +2,6 @@ package com.example.ep3faith.database.user
 
 import androidx.room.*
 import com.example.ep3faith.database.post.DatabasePost
-import com.example.ep3faith.domain.Post
 import com.example.ep3faith.domain.User
 
 
@@ -16,10 +15,20 @@ class DatabaseUser constructor(
 
     var profilePicture: String,
 
+    var counselor: Boolean
+
     )
 
 @Entity(primaryKeys = ["email", "postId"])
 data class UserFavoritePostsCrossRef(
+    val email: String,
+
+    val postId: Int
+
+)
+
+@Entity(primaryKeys = ["email", "postId"])
+data class UserInboxPostsCrossRef(
     val email: String,
 
     val postId: Int
@@ -32,6 +41,16 @@ data class UserWithPosts(
         parentColumn = "email",
         entityColumn = "postId",
         associateBy = Junction(UserFavoritePostsCrossRef::class)
+    )
+    val post: List<DatabasePost>
+)
+
+data class UserWithInbox(
+    @Embedded val user: DatabaseUser,
+    @Relation(
+        parentColumn = "email",
+        entityColumn = "postId",
+        associateBy = Junction(UserInboxPostsCrossRef::class)
     )
     val post: List<DatabasePost>
 )

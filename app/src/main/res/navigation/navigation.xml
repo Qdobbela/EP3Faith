@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/timeLineFragment"
         android:name="com.example.ep3faith.ui.timeline.TimeLineFragment"
-        android:label="TimeLineFragment" >
+        android:label="TimeLine">
         <action
             android:id="@+id/action_timeLineFragment_to_postToevoegenFragment"
             app:destination="@id/postToevoegenFragment" />
@@ -29,15 +29,15 @@
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.ep3faith.ui.favorites.FavoritesFragment"
-        android:label="FavoritesFragment" />
+        android:label="Favorites" />
     <activity
         android:id="@+id/loginActivity"
         android:name="com.example.ep3faith.LoginActivity"
-        android:label="LoginActivity" />
+        android:label="Login" />
     <fragment
         android:id="@+id/postToevoegenFragment"
         android:name="com.example.ep3faith.ui.addPost.PostToevoegenFragment"
-        android:label="PostToevoegenFragment" >
+        android:label="Post Toevoegen">
         <action
             android:id="@+id/action_postToevoegenFragment_to_timeLineFragment"
             app:destination="@id/timeLineFragment" />
@@ -56,5 +56,9 @@
     <fragment
         android:id="@+id/apiFragment"
         android:name="com.example.ep3faith.ui.api.ApiFragment"
-        android:label="ApiFragment" />
+        android:label="Api" />
+    <fragment
+        android:id="@+id/inboxFragment"
+        android:name="com.example.ep3faith.ui.inbox.InboxFragment"
+        android:label="Inbox" />
 </navigation>

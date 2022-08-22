@@ -1,4 +1,4 @@
-package com.example.ep3faith.ui.timeline
+package com.example.ep3faith.ui.inbox
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -14,108 +14,69 @@ import com.auth0.android.callback.Callback
 import com.auth0.android.result.Credentials
 import com.auth0.android.result.UserProfile
 import com.example.ep3faith.database.*
+import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.database.post.PostWithReactions
 import com.example.ep3faith.database.reaction.DatabaseReaction
 import com.example.ep3faith.database.user.DatabaseUser
-import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
+import com.example.ep3faith.database.user.UserInboxPostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class InboxViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val users: List<DatabaseUser> = listOf(
-        DatabaseUser("quinten.dobbelaere@gmail.com", "Nicerdicer", "content://com.android.providers.media.documents/document/image%3A107958", false),
-        DatabaseUser("quinten.dobbelaere@student.hogent.be", "tryhard", "content://com.android.providers.media.documents/document/image%3A107958", false),
-        DatabaseUser("counselor@faith.be", "counselor", "content://com.android.providers.media.documents/document/image%3A107958", true),
-        )
-    /*private val initPosts: List<Post> = listOf(
-        Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-        Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
-    )*/
+
     private var _user = MutableLiveData<DatabaseUser>()
     val user: LiveData<DatabaseUser>
         get() = _user
 
-    private var _posts = MutableLiveData<List<PostWithReactions>>()
-    val posts: LiveData<List<PostWithReactions>>
-        get() = _posts
-
-
+    private var _Inbox = MutableLiveData<List<PostWithReactions>>()
+    val Inbox: LiveData<List<PostWithReactions>>
+        get() = _Inbox
 
     init {
-        Timber.i("Initialized")
         getCredentials()
-        initDB()
-        gatherPosts()
     }
 
-
-    //INITIALIZE THE DB
-
-    private fun initDB() {
+    fun gatherInbox() {
         uiScope.launch {
-            dbClear()
-            dBinit()
+            gatherInboxFromDb()
         }
     }
 
-    private suspend fun dBinit(){
-        withContext(Dispatchers.IO) {
-           database.insertUsers(users)
-            //database.insertPosts(initPosts)
+    private suspend fun gatherInboxFromDb() {
+        val posts: List<DatabasePost>
+        val postIdList: MutableList<Int> = mutableListOf()
+        var postReactionList: List<PostWithReactions>
+        withContext(Dispatchers.IO){
+            posts = user.value?.let { database.getUserWithInbox(it.email).post }!!
+            for(post in posts){
+                postIdList.add(post.postId)
+            }
+            postReactionList = database.getFavoritesWithReactions(postIdList)
         }
+        _Inbox.postValue(postReactionList)
     }
 
-    //CLEAR THE DB
-
-    private suspend fun dbClear() {
-        withContext(Dispatchers.IO) {
-            database.clearUsers()
-            //database.clearPosts()
-        }
-    }
     override fun onCleared() {
         super.onCleared()
         Timber.i("Cleared")
     }
 
-    //GET THE POSTS FROM THE DB
-
-    fun gatherPosts(){
+    fun removeInbox(postId: Int) {
         uiScope.launch {
-            Timber.i("Gathering Posts")
-            _posts.value = getPosts()
-        }
-    }
-
-    private suspend fun getPosts(): List<PostWithReactions>?{
-        var posts: List<PostWithReactions>?
-        withContext(Dispatchers.IO){
-            posts = database.getPostWithReactions()
-        }
-        return posts
-    }
-
-    // ADDING AND RETRIEVING FAVORITES TO DB
-
-    fun addFavorite(postId: Int) {
-        Timber.i("adding a favorite")
-        val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email, postId) }
-        uiScope.launch {
-            if (favorite != null) {
-                favoriteToDb(favorite)
+            val inbox = user.value?.let{ UserInboxPostsCrossRef(it.email,postId) }
+            if (inbox != null) {
+                removeInboxDb(inbox)
             }
+            gatherInbox()
         }
     }
 
-    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef){
+    private suspend fun removeInboxDb(Inbox: UserInboxPostsCrossRef) {
         withContext(Dispatchers.IO){
-            database.insertFavorite(favorite)
+            database.deleteInbox(Inbox)
         }
     }
 
@@ -129,44 +90,13 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
                 insertReactionDb(reaction)
             }
         }
-        gatherPosts()
+        removeInbox(postId)
+        gatherInbox()
     }
 
     private suspend fun insertReactionDb(reaction: DatabaseReaction){
         withContext(Dispatchers.IO){
             database.insertReaction(reaction)
-        }
-    }
-
-    // DELETE A POST
-
-    fun deletePost(postId: Int) {
-        uiScope.launch {
-            deletePostDb(postId)
-        }
-    }
-
-    private suspend fun deletePostDb(postId: Int){
-        withContext(Dispatchers.IO){
-            val post = database.getPostById(postId)
-            database.deletePost(post)
-            gatherPosts()
-        }
-    }
-
-    // DELETE REACTION
-
-    fun deleteReaction(reactionId: Int) {
-        uiScope.launch {
-            deleteReactionByIdDb(reactionId)
-        }
-    }
-
-    private suspend fun deleteReactionByIdDb(reactionId: Int){
-        withContext(Dispatchers.IO){
-            val reaction = database.getReactionById(reactionId)
-            database.deleteReaction(reaction)
-            gatherPosts()
         }
     }
 
@@ -223,6 +153,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         uiScope.launch {
             val theUser = getUserFromDB(email)
             _user.postValue(theUser)
+            gatherInbox()
         }
     }
 
@@ -233,6 +164,4 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
         return userByMail
     }
-
-
 }

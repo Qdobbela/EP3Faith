@@ -5,11 +5,7 @@ import androidx.room.*
 import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.database.post.PostWithReactions
 import com.example.ep3faith.database.reaction.DatabaseReaction
-import com.example.ep3faith.database.user.DatabaseUser
-import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
-import com.example.ep3faith.database.user.UserWithPosts
-import com.example.ep3faith.domain.Reaction
-import com.example.ep3faith.domain.User
+import com.example.ep3faith.database.user.*
 
 @Dao
 interface FaithDatabaseDAO {
@@ -59,7 +55,7 @@ interface FaithDatabaseDAO {
     fun getPostWithReactions(): List<PostWithReactions>
 
     @Transaction
-    @Query("SELECT * FROM post_table WHERE postId IN (:favorites)")
+    @Query("SELECT * FROM post_table WHERE postId NOT IN (:favorites)")
     fun getFavoritesWithReactions(favorites: List<Int>): List<PostWithReactions>
 
     //FAVORITE
@@ -73,6 +69,15 @@ interface FaithDatabaseDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertFavorite(favorite: UserFavoritePostsCrossRef)
+
+    //INBOX
+
+    @Transaction
+    @Query("SELECT * FROM user_table WHERE email = :email")
+    fun getUserWithInbox(email: String): UserWithInbox
+
+    @Insert
+    fun deleteInbox(inbox: UserInboxPostsCrossRef)
 
     //REACTION
 

@@ -8,8 +8,9 @@ import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.database.reaction.DatabaseReaction
 import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
+import com.example.ep3faith.database.user.UserInboxPostsCrossRef
 
-@Database(entities = [DatabaseUser::class, DatabasePost::class, UserFavoritePostsCrossRef::class, DatabaseReaction::class], version = 13, exportSchema = false)
+@Database(entities = [DatabaseUser::class, DatabasePost::class, UserFavoritePostsCrossRef::class, UserInboxPostsCrossRef::class,DatabaseReaction::class], version = 14, exportSchema = false)
 abstract class FaithDatabase: RoomDatabase() {
     abstract val faithDatabaseDAO: FaithDatabaseDAO
 

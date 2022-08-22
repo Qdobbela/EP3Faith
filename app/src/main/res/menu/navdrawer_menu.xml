@@ -10,4 +10,7 @@
     <item
         android:id="@+id/apiFragment"
         android:title="@string/Dadjoke" />
+    <item
+        android:id="@+id/inboxFragment"
+        android:title="@string/Inbox" />
 </menu>
