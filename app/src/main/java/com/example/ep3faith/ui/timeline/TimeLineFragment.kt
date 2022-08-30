@@ -1,12 +1,12 @@
 package com.example.ep3faith.ui.timeline
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -25,7 +25,6 @@ class TimeLineFragment : Fragment() {
 
     private lateinit var viewModel: TimeLineViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,12 +32,13 @@ class TimeLineFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding: FragmentTimeLineBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_time_line, container, false)
 
-        //get viewModel through factory
+        // get viewModel through factory
         val application = requireNotNull(this.activity).application
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = TimeLineViewModelFactory(dataSource, application)
@@ -46,14 +46,17 @@ class TimeLineFragment : Fragment() {
         binding.timelineViewModel = viewModel
         binding.lifecycleOwner = this
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            viewModel.user.value?.let { it1 -> Timber.i("Got the user: %s", it1.email) }
-            initAdapter(binding)
-        })
+        viewModel.user.observe(
+            viewLifecycleOwner,
+            Observer {
+                viewModel.user.value?.let { it1 -> Timber.i("Got the user: %s", it1.email) }
+                initAdapter(binding)
+            }
+        )
 
-        binding.nieuwePostButton.setOnClickListener (
+        binding.nieuwePostButton.setOnClickListener(
             Navigation.createNavigateOnClickListener(R.id.action_timeLineFragment_to_postToevoegenFragment)
-            )
+        )
 
         return binding.root
     }
@@ -66,32 +69,35 @@ class TimeLineFragment : Fragment() {
                         viewModel.addFavorite(postId)
                     },
                     PostAdapter.AddReactionListener { postId, pos ->
-                        val view = binding.postList.getChildAt(pos)
-                        val editText: EditText = view.findViewById(R.id.addReactionEditView)
-                        viewModel.addReaction(editText.text.toString(), postId)
+                        val view = binding.postList.findViewHolderForLayoutPosition(pos)?.itemView
+                        val editText: EditText? = view?.findViewById(R.id.addReactionEditView)
+                        viewModel.addReaction(editText?.text.toString(), postId)
                     },
-                    PostAdapter.DeletePostClickListener{ postId ->
+                    PostAdapter.DeletePostClickListener { postId ->
                         viewModel.deletePost(postId)
                     },
-                    PostAdapter.EditPostClickListener{ postId ->
+                    PostAdapter.EditPostClickListener { postId ->
                         view?.findNavController()?.navigate(TimeLineFragmentDirections.actionTimeLineFragmentToEditPostFragment(postId))
                     },
-                    ReactionAdapter.DeleteReactionClickListener{ reactionId ->
+                    ReactionAdapter.DeleteReactionClickListener { reactionId ->
                         viewModel.deleteReaction(reactionId)
-                    }
-                    ,it
+                    },
+                    it
                 )
             }
 
         binding.postList.adapter = adapter
 
-        viewModel.posts.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                if (adapter != null) {
-                    adapter.submitList(it)
+        viewModel.posts.observe(
+            viewLifecycleOwner,
+            Observer {
+                it?.let {
+                    if (adapter != null) {
+                        adapter.submitList(it)
+                    }
                 }
             }
-        })
+        )
     }
 
     companion object {
@@ -107,6 +113,4 @@ class TimeLineFragment : Fragment() {
         super.onResume()
         viewModel.gatherPosts()
     }
-
-
 }

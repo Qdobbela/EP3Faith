@@ -15,7 +15,6 @@ import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.AuthenticationException
 import com.auth0.android.authentication.storage.CredentialsManager
-import com.auth0.android.authentication.storage.CredentialsManagerException
 import com.auth0.android.authentication.storage.SharedPreferencesStorage
 import com.auth0.android.callback.Callback
 import com.auth0.android.provider.WebAuthProvider
@@ -24,7 +23,6 @@ import com.auth0.android.result.UserProfile
 import com.example.ep3faith.databinding.ActivityMainBinding
 import timber.log.Timber
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,13 +37,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //auth0
+        // auth0
         account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
         )
 
-        //binding
+        // binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         drawerLayout = binding.drawerLayout
 
@@ -57,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(binding.navView, navController)
 
         val extras: Bundle? = intent.extras
-        if(extras != null){
+        if (extras != null) {
             accesToken = extras.getString("accestoken").toString()
         }
 
@@ -65,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(this))
 
         Timber.i("about to safe credentials")
-        val credentials = Credentials("", accesToken, "", "", Date(2022,81,6), "")
+        val credentials = Credentials("", accesToken, "", "", Date(2022, 81, 6), "")
         manager.saveCredentials(credentials)
     }
 
@@ -75,26 +73,29 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 
-    fun logout(){
+    fun logout() {
         WebAuthProvider.logout(account)
             .withScheme("demo")
-            .start(this, object:
-                Callback<Void?, AuthenticationException> {
-                override fun onSuccess(payload: Void?) {
-                    // The user has been logged out!
-                    Toast
-                        .makeText( applicationContext, "Logout has succeeded", Toast.LENGTH_LONG)
-                        .show()
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    startActivity(intent)
-                }
+            .start(
+                this,
+                object :
+                    Callback<Void?, AuthenticationException> {
+                    override fun onSuccess(payload: Void?) {
+                        // The user has been logged out!
+                        Toast
+                            .makeText(applicationContext, "Logout has succeeded", Toast.LENGTH_LONG)
+                            .show()
+                        val intent = Intent(applicationContext, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
 
-                override fun onFailure(error: AuthenticationException) {
-                    // Something went wrong!
-                    Toast
-                        .makeText( applicationContext, "Logout has failed", Toast.LENGTH_LONG)
-                        .show()
+                    override fun onFailure(error: AuthenticationException) {
+                        // Something went wrong!
+                        Toast
+                            .makeText(applicationContext, "Logout has failed", Toast.LENGTH_LONG)
+                            .show()
+                    }
                 }
-            })
+            )
     }
 }

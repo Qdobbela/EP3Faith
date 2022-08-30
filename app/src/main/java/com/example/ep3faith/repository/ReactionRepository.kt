@@ -13,5 +13,4 @@ class ReactionRepository(private val database: FaithDatabase) {
     private var changeableLiveDataPost = Transformations.map(database.faithDatabaseDAO.getReactions()) {
         it.asDomainModel()
     }
-
 }

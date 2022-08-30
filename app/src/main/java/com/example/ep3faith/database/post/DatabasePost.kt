@@ -8,7 +8,7 @@ import androidx.room.Relation
 import com.example.ep3faith.database.reaction.DatabaseReaction
 import com.example.ep3faith.domain.Post
 
-@Entity(tableName = "post_table",indices = [Index(value = ["emailUser"])])
+@Entity(tableName = "post_table", indices = [Index(value = ["emailUser"])])
 class DatabasePost constructor(
 
     @PrimaryKey(autoGenerate = true)
@@ -36,11 +36,12 @@ data class PostWithReactions(
 
 fun List<DatabasePost>.asDomainModel(): List<Post> {
     return map {
-        Post (
+        Post(
             postId = it.postId,
             username = it.username,
             emailUser = it.emailUser,
             caption = it.picture,
-            link = it.link)
+            link = it.link
+        )
     }
 }

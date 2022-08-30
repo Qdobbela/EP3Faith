@@ -3,6 +3,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         def nav_version = "2.5.1"
@@ -16,6 +17,13 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+
+plugins {
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("org.jlleitschuh.gradle.ktlint-idea") version "11.0.0"
+}
+
+apply plugin: "org.jlleitschuh.gradle.ktlint-idea"
 
 task clean(type: Delete) {
     delete rootProject.buildDir

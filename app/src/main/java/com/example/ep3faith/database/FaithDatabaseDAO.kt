@@ -1,7 +1,13 @@
 package com.example.ep3faith.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.database.post.PostWithReactions
 import com.example.ep3faith.database.reaction.DatabaseReaction
@@ -10,7 +16,7 @@ import com.example.ep3faith.database.user.*
 @Dao
 interface FaithDatabaseDAO {
 
-    //USER
+    // USER
 
     @Query("SELECT * FROM user_table WHERE email = :email")
     fun getUserByEmail(email: String): DatabaseUser
@@ -24,7 +30,7 @@ interface FaithDatabaseDAO {
     @Update
     fun updateUser(user: DatabaseUser)
 
-    //POST
+    // POST
 
     @Query("SELECT * FROM post_table")
     fun getPosts(): LiveData<List<DatabasePost>>
@@ -55,10 +61,14 @@ interface FaithDatabaseDAO {
     fun getPostWithReactions(): List<PostWithReactions>
 
     @Transaction
-    @Query("SELECT * FROM post_table WHERE postId NOT IN (:favorites)")
+    @Query("SELECT * FROM post_table WHERE postId IN (:favorites)")
     fun getFavoritesWithReactions(favorites: List<Int>): List<PostWithReactions>
 
-    //FAVORITE
+    @Transaction
+    @Query("SELECT * FROM post_table WHERE postId NOT IN (:favorites)")
+    fun getInboxWithReactions(favorites: List<Int>): List<PostWithReactions>
+
+    // FAVORITE
 
     @Transaction
     @Query("SELECT * FROM user_table WHERE email = :email")
@@ -70,7 +80,7 @@ interface FaithDatabaseDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertFavorite(favorite: UserFavoritePostsCrossRef)
 
-    //INBOX
+    // INBOX
 
     @Transaction
     @Query("SELECT * FROM user_table WHERE email = :email")
@@ -79,7 +89,7 @@ interface FaithDatabaseDAO {
     @Insert
     fun deleteInbox(inbox: UserInboxPostsCrossRef)
 
-    //REACTION
+    // REACTION
 
     @Insert
     fun insertReaction(reaction: DatabaseReaction)
@@ -95,5 +105,4 @@ interface FaithDatabaseDAO {
 
     @Query("SELECT * FROM user_table")
     fun getUsers(): LiveData<List<DatabaseUser>>
-
 }

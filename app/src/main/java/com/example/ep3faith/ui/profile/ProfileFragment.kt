@@ -28,13 +28,14 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentProfileBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false )
+        val binding: FragmentProfileBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         Timber.i("called ViewModelProvider")
 
-        //get viewModel through factory
+        // get viewModel through factory
         val application = requireNotNull(this.activity).application
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = ProfileViewModelFactory(dataSource, application)
@@ -43,13 +44,12 @@ class ProfileFragment : Fragment() {
         binding.profileViewModel = viewModel
         binding.lifecycleOwner = this
 
-
         binding.usernameTextView.text = viewModel.user.value?.username
         viewModel.user.value?.profilePicture?.let {
             binding.profilePictureImageView.setImageURI(Uri.parse(it))
         }
 
-        binding.wijzigButton.setOnClickListener{
+        binding.wijzigButton.setOnClickListener {
             binding.wijzigButton.visibility = View.GONE
             binding.usernameTextView.visibility = View.GONE
             binding.opslaanButton.visibility = View.VISIBLE
@@ -58,11 +58,11 @@ class ProfileFragment : Fragment() {
             binding.profielfotoButton.visibility = View.VISIBLE
         }
 
-        binding.opslaanButton.setOnClickListener{
+        binding.opslaanButton.setOnClickListener {
             imageUri.let {
-                viewModel.updateUser(binding.usernameEditPlainText.text.toString(),imageUri)
+                viewModel.updateUser(binding.usernameEditPlainText.text.toString(), imageUri)
             }
-            //viewModel.changeUsername(binding.usernameEditPlainText.text.toString())
+            // viewModel.changeUsername(binding.usernameEditPlainText.text.toString())
 
             binding.wijzigButton.visibility = View.VISIBLE
             binding.usernameTextView.visibility = View.VISIBLE
@@ -75,7 +75,7 @@ class ProfileFragment : Fragment() {
             (activity as MainActivity).logout()
         }
 
-        val getImage =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        val getImage = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             binding.profilePictureImageView.setImageURI(uri)
             if (uri != null) {
                 imageUri = uri
@@ -86,22 +86,23 @@ class ProfileFragment : Fragment() {
             getImage.launch(arrayOf("image/*"))
         }
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                binding.profilePictureImageView.setImageURI(Uri.parse(it.profilePicture))
+        viewModel.user.observe(
+            viewLifecycleOwner,
+            Observer {
+                it?.let {
+                    binding.profilePictureImageView.setImageURI(Uri.parse(it.profilePicture))
+                }
             }
-        })
+        )
 
         return binding.root
     }
-
 
     companion object {
         @JvmStatic
         fun newInstance() =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
-
                 }
             }
     }

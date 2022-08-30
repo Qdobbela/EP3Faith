@@ -1,10 +1,6 @@
 package com.example.ep3faith.domain
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-
-data class Post (
+data class Post(
 
     var postId: Int = 0,
 
@@ -27,7 +23,7 @@ data class User(
 
     var profilePicture: String = "",
 
-    )
+)
 
 data class Reaction(
 
@@ -41,4 +37,3 @@ data class Reaction(
 
     var reactionUserEmail: String = ""
 )
-

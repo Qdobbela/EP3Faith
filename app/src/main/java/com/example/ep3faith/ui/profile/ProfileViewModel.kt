@@ -19,9 +19,8 @@ import com.example.ep3faith.database.user.DatabaseUser
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-
-class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
-        : AndroidViewModel(application) {
+class ProfileViewModel(val database: FaithDatabaseDAO, application: Application) :
+    AndroidViewModel(application) {
 
     private var viewModelJob = Job()
 
@@ -29,21 +28,21 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
 
     private var _user = MutableLiveData<DatabaseUser>()
     val user: LiveData<DatabaseUser>
-            get() = _user
+        get() = _user
 
     init {
         Timber.i("Initialized")
         getCredentials()
     }
 
-    fun getUser(email: String){
+    fun getUser(email: String) {
         uiScope.launch {
             val theUser = getUserFromDB(email)
             _user.value = theUser
         }
     }
 
-    private suspend fun getUserFromDB(email: String): DatabaseUser{
+    private suspend fun getUserFromDB(email: String): DatabaseUser {
         val userByMail: DatabaseUser
         withContext(Dispatchers.IO) {
             userByMail = database.getUserByEmail(email)
@@ -57,7 +56,7 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         Timber.i("Cleared")
     }
 
-    fun updateUser(username: String, imageUri: Uri){
+    fun updateUser(username: String, imageUri: Uri) {
         _user.value?.username = username
         _user.value?.profilePicture = imageUri.toString()
         _user.postValue(user.value)
@@ -66,18 +65,17 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         }
     }
 
-    private suspend fun dbUpdateUser(user: DatabaseUser){
-        withContext(Dispatchers.IO){
+    private suspend fun dbUpdateUser(user: DatabaseUser) {
+        withContext(Dispatchers.IO) {
             database.updateUser(user)
         }
     }
-
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
      */
 
-    private fun getCredentials(){
+    private fun getCredentials() {
         val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
@@ -87,7 +85,7 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(getApplication()))
         var credentials: Credentials
 
-        manager.getCredentials(object: Callback<Credentials, CredentialsManagerException> {
+        manager.getCredentials(object : Callback<Credentials, CredentialsManagerException> {
             override fun onSuccess(cred: Credentials) {
                 Timber.i("Credentials acquired")
                 credentials = cred
@@ -99,8 +97,6 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
                 Timber.i("getting credentials failed: %s", error.message)
             }
         })
-
-
     }
 
     private fun showUserProfile(account: Auth0, accessToken: String) {
@@ -119,5 +115,4 @@ class ProfileViewModel(val database: FaithDatabaseDAO, application: Application)
                 }
             })
     }
-
 }

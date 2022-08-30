@@ -10,18 +10,18 @@ import com.example.ep3faith.database.user.DatabaseUser
 import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import com.example.ep3faith.database.user.UserInboxPostsCrossRef
 
-@Database(entities = [DatabaseUser::class, DatabasePost::class, UserFavoritePostsCrossRef::class, UserInboxPostsCrossRef::class,DatabaseReaction::class], version = 14, exportSchema = false)
-abstract class FaithDatabase: RoomDatabase() {
+@Database(entities = [DatabaseUser::class, DatabasePost::class, UserFavoritePostsCrossRef::class, UserInboxPostsCrossRef::class, DatabaseReaction::class], version = 14, exportSchema = false)
+abstract class FaithDatabase : RoomDatabase() {
     abstract val faithDatabaseDAO: FaithDatabaseDAO
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: FaithDatabase? = null
 
         fun getInstance(context: Context): FaithDatabase {
             synchronized(this) {
                 var instance = INSTANCE
-                if(instance == null){
+                if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         FaithDatabase::class.java,
@@ -32,7 +32,5 @@ abstract class FaithDatabase: RoomDatabase() {
                 return instance
             }
         }
-
     }
 }
-//

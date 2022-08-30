@@ -22,7 +22,7 @@ import com.example.ep3faith.database.user.UserInboxPostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class InboxViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class InboxViewModel(val database: FaithDatabaseDAO, application: Application) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -49,12 +49,12 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
         val posts: List<DatabasePost>
         val postIdList: MutableList<Int> = mutableListOf()
         var postReactionList: List<PostWithReactions>
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             posts = user.value?.let { database.getUserWithInbox(it.email).post }!!
-            for(post in posts){
+            for (post in posts) {
                 postIdList.add(post.postId)
             }
-            postReactionList = database.getFavoritesWithReactions(postIdList)
+            postReactionList = database.getInboxWithReactions(postIdList)
         }
         _Inbox.postValue(postReactionList)
     }
@@ -66,7 +66,7 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
 
     fun removeInbox(postId: Int) {
         uiScope.launch {
-            val inbox = user.value?.let{ UserInboxPostsCrossRef(it.email,postId) }
+            val inbox = user.value?.let { UserInboxPostsCrossRef(it.email, postId) }
             if (inbox != null) {
                 removeInboxDb(inbox)
             }
@@ -75,7 +75,7 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
     }
 
     private suspend fun removeInboxDb(Inbox: UserInboxPostsCrossRef) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             database.deleteInbox(Inbox)
         }
     }
@@ -94,19 +94,17 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
         gatherInbox()
     }
 
-    private suspend fun insertReactionDb(reaction: DatabaseReaction){
-        withContext(Dispatchers.IO){
+    private suspend fun insertReactionDb(reaction: DatabaseReaction) {
+        withContext(Dispatchers.IO) {
             database.insertReaction(reaction)
         }
     }
-
 
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
      */
 
-
-    private fun getCredentials(){
+    private fun getCredentials() {
         val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
@@ -116,7 +114,7 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(getApplication()))
         var credentials: Credentials
 
-        manager.getCredentials(object: Callback<Credentials, CredentialsManagerException> {
+        manager.getCredentials(object : Callback<Credentials, CredentialsManagerException> {
             override fun onSuccess(cred: Credentials) {
                 Timber.i("Credentials acquired")
                 credentials = cred
@@ -128,8 +126,6 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
                 Timber.i("getting credentials failed: %s", error.message)
             }
         })
-
-
     }
 
     private fun showUserProfile(account: Auth0, accessToken: String) {
@@ -149,7 +145,7 @@ class InboxViewModel(val database: FaithDatabaseDAO, application: Application): 
             })
     }
 
-    private fun getUser(email: String){
+    private fun getUser(email: String) {
         uiScope.launch {
             val theUser = getUserFromDB(email)
             _user.postValue(theUser)

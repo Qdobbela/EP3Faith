@@ -8,10 +8,10 @@ import com.example.ep3faith.database.FaithDatabaseDAO
 class FavoritViewModelFactory(
     private val dataSource: FaithDatabaseDAO,
     private val application: Application
-) : ViewModelProvider.Factory{
+) : ViewModelProvider.Factory {
     @Suppress("unchecked cast")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(FavoritesViewModel::class.java)){
+        if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
             return FavoritesViewModel(dataSource, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

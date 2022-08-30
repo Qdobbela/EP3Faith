@@ -1,7 +1,5 @@
 package com.example.ep3faith.network
 
-import com.example.ep3faith.database.post.DatabasePost
-
 class DataTransferObjects {
 
     /*

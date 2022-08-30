@@ -20,11 +20,10 @@ import com.example.ep3faith.database.user.DatabaseUser
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-
-class EditPostViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class EditPostViewModel(val database: FaithDatabaseDAO, application: Application) : AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private lateinit var user : DatabaseUser
+    private lateinit var user: DatabaseUser
 
     private var _saved = MutableLiveData<Boolean>()
     val saved: LiveData<Boolean>
@@ -38,16 +37,16 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
         getCredentials()
     }
 
-    //SAVING A POST TO THE DB
+    // SAVING A POST TO THE DB
 
     fun editPost(postId: Int, caption: String, link: String, imageUri: Uri) {
-        val post = DatabasePost( postId, user.username, user.email , caption, imageUri.toString(),link)
+        val post = DatabasePost(postId, user.username, user.email, caption, imageUri.toString(), link)
         uiScope.launch {
             _saved.value = dbPostOpslaan(post)
         }
     }
 
-    private suspend fun dbPostOpslaan(post: DatabasePost): Boolean{
+    private suspend fun dbPostOpslaan(post: DatabasePost): Boolean {
         withContext(Dispatchers.IO) {
             database.updatePost(post)
         }
@@ -63,7 +62,7 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
     }
 
     private suspend fun getPostDb(postId: Int) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             _post.postValue(database.getPostById(postId))
         }
     }
@@ -72,8 +71,7 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
      */
 
-
-    private fun getCredentials(){
+    private fun getCredentials() {
         val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
@@ -83,7 +81,7 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(getApplication()))
         var credentials: Credentials
 
-        manager.getCredentials(object: Callback<Credentials, CredentialsManagerException> {
+        manager.getCredentials(object : Callback<Credentials, CredentialsManagerException> {
             override fun onSuccess(cred: Credentials) {
                 Timber.i("Credentials acquired")
                 credentials = cred
@@ -95,8 +93,6 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
                 Timber.i("getting credentials failed: %s", error.message)
             }
         })
-
-
     }
 
     private fun showUserProfile(account: Auth0, accessToken: String) {
@@ -116,7 +112,7 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
             })
     }
 
-    private fun getUser(email: String){
+    private fun getUser(email: String) {
         uiScope.launch {
             val theUser = getUserFromDB(email)
             user = theUser
@@ -130,5 +126,4 @@ class EditPostViewModel(val database: FaithDatabaseDAO, application: Application
         }
         return userByMail
     }
-
 }

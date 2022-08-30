@@ -21,7 +21,7 @@ import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class FavoritesViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class FavoritesViewModel(val database: FaithDatabaseDAO, application: Application) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -38,7 +38,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         getCredentials()
     }
 
-    private fun gatherFavorites() {
+    fun gatherFavorites() {
         uiScope.launch {
             gatherFavoritesFromDb()
         }
@@ -48,14 +48,16 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         val posts: List<DatabasePost>
         val postIdList: MutableList<Int> = mutableListOf()
         var postReactionList: List<PostWithReactions>
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             posts = user.value?.let { database.getUserWithFavorites(it.email).post }!!
-            for(post in posts){
+            Timber.i("got posts from DB: %s", posts)
+            for (post in posts) {
                 postIdList.add(post.postId)
             }
             postReactionList = database.getFavoritesWithReactions(postIdList)
         }
-        _favorites.value = postReactionList
+        Timber.i("favorites gathered: %s", postReactionList)
+        _favorites.postValue(postReactionList)
     }
 
     override fun onCleared() {
@@ -65,15 +67,18 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
 
     fun removeFavorite(postId: Int) {
         uiScope.launch {
-            val favorite = user.value?.let{ UserFavoritePostsCrossRef(it.email,postId) }
+            val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email, postId) }
             if (favorite != null) {
+                Timber.i("Favorite isn't null")
                 removeFavoriteDb(favorite)
+            } else {
+                Timber.i("Oh no Favorite is null...")
             }
         }
     }
 
     private suspend fun removeFavoriteDb(favorite: UserFavoritePostsCrossRef) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             database.deleteFavorite(favorite)
         }
     }
@@ -82,8 +87,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
      */
 
-
-    private fun getCredentials(){
+    private fun getCredentials() {
         val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
@@ -93,7 +97,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(getApplication()))
         var credentials: Credentials
 
-        manager.getCredentials(object: Callback<Credentials, CredentialsManagerException> {
+        manager.getCredentials(object : Callback<Credentials, CredentialsManagerException> {
             override fun onSuccess(cred: Credentials) {
                 Timber.i("Credentials acquired")
                 credentials = cred
@@ -105,8 +109,6 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
                 Timber.i("getting credentials failed: %s", error.message)
             }
         })
-
-
     }
 
     private fun showUserProfile(account: Auth0, accessToken: String) {
@@ -126,7 +128,7 @@ class FavoritesViewModel(val database: FaithDatabaseDAO, application: Applicatio
             })
     }
 
-    private fun getUser(email: String){
+    private fun getUser(email: String) {
         uiScope.launch {
             val theUser = getUserFromDB(email)
             _user.postValue(theUser)

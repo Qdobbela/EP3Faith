@@ -33,12 +33,12 @@ data class ReactionAndUser(
 
 fun List<DatabaseReaction>.asDomainModel(): List<Reaction> {
     return map {
-        Reaction (
+        Reaction(
             it.reactionId,
             it.reactionText,
             it.reactionUser,
             it.hostPostId,
             it.reactionUserEmail
-                )
+        )
     }
 }

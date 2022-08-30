@@ -21,15 +21,15 @@ import com.example.ep3faith.database.user.UserFavoritePostsCrossRef
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application): AndroidViewModel(application) {
+class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private val users: List<DatabaseUser> = listOf(
-        DatabaseUser("quinten.dobbelaere@gmail.com", "Nicerdicer", "content://com.android.providers.media.documents/document/image%3A107958", false),
-        DatabaseUser("quinten.dobbelaere@student.hogent.be", "tryhard", "content://com.android.providers.media.documents/document/image%3A107958", false),
-        DatabaseUser("counselor@faith.be", "counselor", "content://com.android.providers.media.documents/document/image%3A107958", true),
-        )
+        DatabaseUser("quinten.dobbelaere@gmail.com", "Nicerdicer", "", false),
+        DatabaseUser("quinten.dobbelaere@student.hogent.be", "tryhard", "", false),
+        DatabaseUser("counselor@faith.be", "counselor", "", true),
+    )
     /*private val initPosts: List<Post> = listOf(
         Post(0,"NicerDicer","Grandma decorating the tree","","https://PayForMyGrandmaTree"),
         Post(0,"PoopyButtHole","Grandma decorating this mf","","https://PayForMyGrandmaDEN"),
@@ -45,8 +45,6 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     val posts: LiveData<List<PostWithReactions>>
         get() = _posts
 
-
-
     init {
         Timber.i("Initialized")
         getCredentials()
@@ -54,8 +52,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         gatherPosts()
     }
 
-
-    //INITIALIZE THE DB
+    // INITIALIZE THE DB
 
     private fun initDB() {
         uiScope.launch {
@@ -64,14 +61,14 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun dBinit(){
+    private suspend fun dBinit() {
         withContext(Dispatchers.IO) {
-           database.insertUsers(users)
-            //database.insertPosts(initPosts)
+            database.insertUsers(users)
+            // database.insertPosts(initPosts)
         }
     }
 
-    //CLEAR THE DB
+    // CLEAR THE DB
 
     private suspend fun dbClear() {
         withContext(Dispatchers.IO) {
@@ -84,18 +81,18 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         Timber.i("Cleared")
     }
 
-    //GET THE POSTS FROM THE DB
+    // GET THE POSTS FROM THE DB
 
-    fun gatherPosts(){
+    fun gatherPosts() {
         uiScope.launch {
             Timber.i("Gathering Posts")
             _posts.value = getPosts()
         }
     }
 
-    private suspend fun getPosts(): List<PostWithReactions>?{
+    private suspend fun getPosts(): List<PostWithReactions>? {
         var posts: List<PostWithReactions>?
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             posts = database.getPostWithReactions()
         }
         return posts
@@ -104,17 +101,17 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
     // ADDING AND RETRIEVING FAVORITES TO DB
 
     fun addFavorite(postId: Int) {
-        Timber.i("adding a favorite")
         val favorite = user.value?.let { UserFavoritePostsCrossRef(it.email, postId) }
         uiScope.launch {
             if (favorite != null) {
+                Timber.i("adding favorite: %s", favorite)
                 favoriteToDb(favorite)
             }
         }
     }
 
-    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef){
-        withContext(Dispatchers.IO){
+    private suspend fun favoriteToDb(favorite: UserFavoritePostsCrossRef) {
+        withContext(Dispatchers.IO) {
             database.insertFavorite(favorite)
         }
     }
@@ -132,8 +129,8 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         gatherPosts()
     }
 
-    private suspend fun insertReactionDb(reaction: DatabaseReaction){
-        withContext(Dispatchers.IO){
+    private suspend fun insertReactionDb(reaction: DatabaseReaction) {
+        withContext(Dispatchers.IO) {
             database.insertReaction(reaction)
         }
     }
@@ -146,8 +143,8 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun deletePostDb(postId: Int){
-        withContext(Dispatchers.IO){
+    private suspend fun deletePostDb(postId: Int) {
+        withContext(Dispatchers.IO) {
             val post = database.getPostById(postId)
             database.deletePost(post)
             gatherPosts()
@@ -162,21 +159,19 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
     }
 
-    private suspend fun deleteReactionByIdDb(reactionId: Int){
-        withContext(Dispatchers.IO){
+    private suspend fun deleteReactionByIdDb(reactionId: Int) {
+        withContext(Dispatchers.IO) {
             val reaction = database.getReactionById(reactionId)
             database.deleteReaction(reaction)
             gatherPosts()
         }
     }
 
-
     /*
     THIS PART IS FOR ACQUIRING THE USER'S CREDENTIALS
      */
 
-
-    private fun getCredentials(){
+    private fun getCredentials() {
         val account = Auth0(
             "4AwgfcJ6inGtdUDuVWv3jX9Nwmp6FcDG",
             "dev-4i-4zxou.us.auth0.com"
@@ -186,7 +181,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         val manager = CredentialsManager(apiClient, SharedPreferencesStorage(getApplication()))
         var credentials: Credentials
 
-        manager.getCredentials(object: Callback<Credentials, CredentialsManagerException> {
+        manager.getCredentials(object : Callback<Credentials, CredentialsManagerException> {
             override fun onSuccess(cred: Credentials) {
                 Timber.i("Credentials acquired")
                 credentials = cred
@@ -198,8 +193,6 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
                 Timber.i("getting credentials failed: %s", error.message)
             }
         })
-
-
     }
 
     private fun showUserProfile(account: Auth0, accessToken: String) {
@@ -219,7 +212,7 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
             })
     }
 
-    private fun getUser(email: String){
+    private fun getUser(email: String) {
         uiScope.launch {
             val theUser = getUserFromDB(email)
             _user.postValue(theUser)
@@ -233,6 +226,4 @@ class TimeLineViewModel(val database: FaithDatabaseDAO, application: Application
         }
         return userByMail
     }
-
-
 }

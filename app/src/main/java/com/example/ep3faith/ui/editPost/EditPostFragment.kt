@@ -24,14 +24,13 @@ class EditPostFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding: FragmentPostToevoegenBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_post_toevoegen, container, false)
 
-        //get viewModel through factory
+        // get viewModel through factory
         val application = requireNotNull(this.activity).application
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = EditPostViewModelFactory(dataSource, application)
@@ -40,27 +39,33 @@ class EditPostFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        //ARGS
+        // ARGS
 
         val args = EditPostFragmentArgs.fromBundle(requireArguments())
         viewModel.getPost(args.postId)
 
-        viewModel.post.observe(viewLifecycleOwner, Observer {
-            initEdit(binding, viewModel.post)
-        })
+        viewModel.post.observe(
+            viewLifecycleOwner,
+            Observer {
+                initEdit(binding, viewModel.post)
+            }
+        )
 
-        //post updaten
+        // post updaten
         binding.postOpslaanButton.setOnClickListener() {
             viewModel.editPost(args.postId, binding.editCaptionEditView.text.toString(), binding.linkEditView.text.toString(), imageUri)
         }
 
-        viewModel.saved.observe(viewLifecycleOwner, Observer {
-            if(viewModel.saved.value == true){
-                this.findNavController().navigate(R.id.action_editPostFragment_to_timeLineFragment)
+        viewModel.saved.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (viewModel.saved.value == true) {
+                    this.findNavController().navigate(R.id.action_editPostFragment_to_timeLineFragment)
+                }
             }
-        })
+        )
 
-        val getImage =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        val getImage = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             binding.imageView2.setImageURI(uri)
             if (uri != null) {
                 imageUri = uri
@@ -79,7 +84,6 @@ class EditPostFragment : Fragment() {
         binding.editCaptionEditView.setText(post.value?.caption)
         binding.postOpslaanButton.setText("Update")
     }
-
 
     companion object {
         @JvmStatic

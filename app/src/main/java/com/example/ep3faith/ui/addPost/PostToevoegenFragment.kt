@@ -29,7 +29,7 @@ class PostToevoegenFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding: FragmentPostToevoegenBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_post_toevoegen, container, false)
 
-        //get viewModel through factory
+        // get viewModel through factory
         val application = requireNotNull(this.activity).application
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = PostToevoegenViewModelFactory(dataSource, application)
@@ -39,18 +39,21 @@ class PostToevoegenFragment : Fragment() {
         binding.postToevoegenViewModel = viewModel
         binding.lifecycleOwner = this
 
-        //Nieuwe post opslaan
-        binding.postOpslaanButton.setOnClickListener() {
+        // Nieuwe post opslaan
+        binding.postOpslaanButton.setOnClickListener {
             viewModel.postOpslaan(binding.editCaptionEditView.text.toString(), binding.linkEditView.text.toString(), imageUri)
         }
 
-        viewModel.saved.observe(viewLifecycleOwner, Observer {
-            if(viewModel.saved.value == true){
-                this.findNavController().navigate(R.id.action_postToevoegenFragment_to_timeLineFragment)
+        viewModel.saved.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (viewModel.saved.value == true) {
+                    this.findNavController().navigate(R.id.action_postToevoegenFragment_to_timeLineFragment)
+                }
             }
-        })
+        )
 
-        val getImage =  registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        val getImage = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             binding.imageView2.setImageURI(uri)
             if (uri != null) {
                 imageUri = uri
@@ -63,7 +66,6 @@ class PostToevoegenFragment : Fragment() {
         }
         return binding.root
     }
-
 
     companion object {
         @JvmStatic

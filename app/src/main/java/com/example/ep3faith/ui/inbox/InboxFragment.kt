@@ -1,13 +1,12 @@
 package com.example.ep3faith.ui.inbox
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.ep3faith.R
@@ -32,69 +31,80 @@ class InboxFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding: FragmentFavoritesBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorites, container, false)
 
-        //get viewModel through factory
+        // get viewModel through factory
         val application = requireNotNull(this.activity).application
         val dataSource = FaithDatabase.getInstance(application).faithDatabaseDAO
         val viewModelFactory = InboxViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory)[InboxViewModel::class.java]
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            if(viewModel.user.value?.counselor == false){
-                binding.favoriteList.visibility = View.GONE
-                binding.enkelVoorBegeleidersTextView.visibility = View.VISIBLE
-            } else{
-                viewModel.gatherInbox()
+        viewModel.user.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (viewModel.user.value?.counselor == false) {
+                    binding.favoriteList.visibility = View.GONE
+                    binding.enkelVoorBegeleidersTextView.visibility = View.VISIBLE
+                } else {
+                    viewModel.gatherInbox()
+                }
             }
-        })
+        )
 
         binding.inboxViewModel = viewModel
         binding.lifecycleOwner = this
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            initAdapter(binding)
-        })
+        viewModel.user.observe(
+            viewLifecycleOwner,
+            Observer {
+                initAdapter(binding)
+            }
+        )
 
         return binding.root
-
     }
 
     private fun initAdapter(binding: FragmentFavoritesBinding) {
         val adapter =
             viewModel.user.value?.let {
-                PostAdapter(PostAdapter.PostFavoriteListener { postId ->
-                    //
-                },
+                PostAdapter(
+                    PostAdapter.PostFavoriteListener { postId ->
+                        //
+                    },
                     PostAdapter.AddReactionListener { postId, pos ->
-                        val view = binding.favoriteList.getChildAt(pos)
-                        val editText: EditText = view.findViewById(R.id.addReactionEditView)
-                        viewModel.addReaction(editText.text.toString(), postId)
+                        val view = binding.favoriteList.findViewHolderForLayoutPosition(pos)?.itemView
+                        val editText: EditText? = view?.findViewById(R.id.addReactionEditView)
+                        viewModel.addReaction(editText?.text.toString(), postId)
                     },
-                    PostAdapter.DeletePostClickListener{ postId ->
+                    PostAdapter.DeletePostClickListener { postId ->
                         //
                     },
-                    PostAdapter.EditPostClickListener{ postId ->
+                    PostAdapter.EditPostClickListener { postId ->
                         //
                     },
-                    ReactionAdapter.DeleteReactionClickListener{ reactionId ->
+                    ReactionAdapter.DeleteReactionClickListener { reactionId ->
                         //
                     },
-                    it)
+                    it
+                )
             }
 
         binding.favoriteList.adapter = adapter
 
-        viewModel.Inbox.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                if (adapter != null) {
-                    adapter.submitList(it)
+        viewModel.Inbox.observe(
+            viewLifecycleOwner,
+            Observer {
+                it?.let {
+                    if (adapter != null) {
+                        adapter.submitList(it)
+                    }
                 }
             }
-        })
+        )
     }
 
     companion object {

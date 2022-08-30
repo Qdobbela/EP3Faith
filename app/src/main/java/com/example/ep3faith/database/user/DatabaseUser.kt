@@ -1,9 +1,12 @@
 package com.example.ep3faith.database.user
 
-import androidx.room.*
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Junction
+import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.example.ep3faith.database.post.DatabasePost
 import com.example.ep3faith.domain.User
-
 
 @Entity(tableName = "user_table")
 class DatabaseUser constructor(
@@ -17,7 +20,7 @@ class DatabaseUser constructor(
 
     var counselor: Boolean
 
-    )
+)
 
 @Entity(primaryKeys = ["email", "postId"])
 data class UserFavoritePostsCrossRef(
@@ -57,10 +60,10 @@ data class UserWithInbox(
 
 fun List<DatabaseUser>.asDomainModel(): List<User> {
     return map {
-        User (
+        User(
             it.email,
             it.username,
             it.profilePicture
-                )
+        )
     }
 }

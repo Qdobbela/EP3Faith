@@ -4,7 +4,6 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Headers
 
 private const val BASE_URL = "https://icanhazdadjoke.com/"
@@ -18,11 +17,11 @@ interface DadJokeApiService {
     @Headers("Accept: text/plain")
     @GET("/")
     fun getRandomJoke():
-            Call<String>
+        Call<String>
 }
 
-object DadJokeApi{
-    val retrofitService: DadJokeApiService by lazy{
+object DadJokeApi {
+    val retrofitService: DadJokeApiService by lazy {
         retrofit.create(DadJokeApiService::class.java)
     }
 }

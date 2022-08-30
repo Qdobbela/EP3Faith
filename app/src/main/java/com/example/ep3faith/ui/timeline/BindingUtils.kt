@@ -10,21 +10,21 @@ import com.example.ep3faith.database.post.PostWithReactions
 import com.example.ep3faith.database.reaction.DatabaseReaction
 
 @BindingAdapter("usernameString")
-fun TextView.setUsernameString(item: PostWithReactions?){
+fun TextView.setUsernameString(item: PostWithReactions?) {
     item?.let {
         text = item.post.username
     }
 }
 
 @BindingAdapter("captionString")
-fun TextView.setCaptionString(item: PostWithReactions?){
+fun TextView.setCaptionString(item: PostWithReactions?) {
     item?.let {
         text = item.post.caption
     }
 }
 
 @BindingAdapter("linkString")
-fun TextView.setLinkString(item: PostWithReactions?){
+fun TextView.setLinkString(item: PostWithReactions?) {
     item?.let {
         val link = URLSpan(item.post.link)
         this.movementMethod = LinkMovementMethod.getInstance()
@@ -33,20 +33,20 @@ fun TextView.setLinkString(item: PostWithReactions?){
 }
 
 @BindingAdapter("imageUri")
-fun ImageView.setImageUri(item: PostWithReactions?){
+fun ImageView.setImageUri(item: PostWithReactions?) {
     item?.let {
         setImageURI(Uri.parse(item.post.picture))
     }
 }
 
 @BindingAdapter("reactionUser")
-fun TextView.setReactionUsernameString(item: DatabaseReaction?){
+fun TextView.setReactionUsernameString(item: DatabaseReaction?) {
     item?.let {
         text = item.reactionUser
     }
 }
 @BindingAdapter("reaction")
-fun TextView.setReactionString(item: DatabaseReaction?){
+fun TextView.setReactionString(item: DatabaseReaction?) {
     item?.let {
         text = item.reactionText
     }
